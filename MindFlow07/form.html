@@ -1,0 +1,1465 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>心智拼圖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #EDF0F6; --surface: #FFFFFF; --surface2: #E3E8F1; --ink: #14213D; --ink2: #4B5979;
+  --line: #C9D1E2; --accent: #2F5BEA; --accent-ink: #FFFFFF;
+  --good: #11805F; --warn: #A86A00; --bad: #CC3B26;
+  --p0: #3B6CF2; --p1: #F0A400; --p2: #E4572E; --p3: #14A38B; --p4: #9B5DE5; --p5: #D6457F; --p6: #6F7C99; --hole: #56627F;
+  --floorA: #F7F9FD; --floorB: #E6EBF5; --wall: #DCE3F1;
+  --ax: #D93C47; --ay: #1F9A63; --az: #3355D6;
+  --stage: #F4F6FB;
+  --font-display: 'Huninn', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --font-body: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1526; --surface: #152038; --surface2: #1C2A47; --ink: #E8EEFB; --ink2: #9DB0D3; --line: #2B3C60;
+    --accent: #7C9BFF; --accent-ink: #0D1526; --good: #3FD0A3; --warn: #FFC233; --bad: #FF7A62;
+    --p0: #6C93FF; --p1: #FFC233; --p2: #FF7A55; --p3: #3FD0B3; --p4: #BB8CFF; --p5: #FF7AAE; --p6: #8E9CBD; --hole: #0A1120;
+    --floorA: #1B294A; --floorB: #15213C; --wall: #121C33; --ax: #FF6B73; --ay: #3FD08F; --az: #7C9BFF; --stage: #101A30;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1526; --surface: #152038; --surface2: #1C2A47; --ink: #E8EEFB; --ink2: #9DB0D3; --line: #2B3C60;
+  --accent: #7C9BFF; --accent-ink: #0D1526; --good: #3FD0A3; --warn: #FFC233; --bad: #FF7A62;
+  --p0: #6C93FF; --p1: #FFC233; --p2: #FF7A55; --p3: #3FD0B3; --p4: #BB8CFF; --p5: #FF7AAE; --p6: #8E9CBD; --hole: #0A1120;
+  --floorA: #1B294A; --floorB: #15213C; --wall: #121C33; --ax: #FF6B73; --ay: #3FD08F; --az: #7C9BFF; --stage: #101A30;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55; margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 12px 40px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.25; text-wrap: balance; }
+h2 { font-size: 22px; } h3 { font-size: 17px; } p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.app { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.muted { color: var(--ink2); } .small { font-size: 13px; } .mono { font-family: var(--font-mono); }
+.row { display: flex; align-items: center; gap: 10px; } .wrap { flex-wrap: wrap; } .grow { flex: 1; min-width: 0; }
+.between { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.card { background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 14px; }
+.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 10px; border-bottom: 1.5px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; cursor: pointer; background: none; border: 0; padding: 0; text-align: left; }
+.brand h1 { font-size: 24px; letter-spacing: .04em; } .brand small { display: block; font-size: 12px; color: var(--ink2); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; align-items: center; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--surface); border: 1.5px solid var(--line); font-size: 13px; white-space: nowrap; }
+.chip b { font-family: var(--font-mono); font-weight: 500; }
+.chip.warn { border-color: var(--warn); color: var(--warn); } .chip.bad { border-color: var(--bad); color: var(--bad); }
+.btn { white-space: nowrap; border: 1.5px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 14px; min-height: 40px; font-weight: 500; }
+.btn:hover { border-color: var(--accent); } .btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn.pri { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.sm { min-height: 32px; padding: 3px 10px; font-size: 13px; }
+.btn.ghost { background: transparent; }
+input[type=text], textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 10px; min-height: 40px; width: 100%; }
+textarea { min-height: 84px; resize: vertical; }
+.cube { width: 34px; height: 34px; flex: none; }
+
+/* 首頁 */
+.hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
+.hero h2 { font-size: 30px; } .hero .lead { color: var(--ink2); margin: 8px 0 14px; }
+.axes-legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 14px; }
+.axtag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 1.5px solid currentColor; }
+.axtag.x { color: var(--ax); } .axtag.y { color: var(--ay); } .axtag.z { color: var(--az); }
+.modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.mode { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 14px; background: var(--surface); border: 1.5px solid var(--line); }
+.mode:hover { border-color: var(--accent); } .mode h3 { display: flex; align-items: center; gap: 8px; }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 5px 12px; min-height: 34px; font-size: 14px; }
+.seg button.on { background: var(--accent); color: var(--accent-ink); }
+.members { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.member { display: inline-flex; gap: 6px; align-items: center; padding: 2px 4px 2px 10px; border-radius: 999px; background: var(--surface2); font-size: 14px; }
+.member button { border: 0; background: transparent; width: 24px; height: 24px; border-radius: 50%; line-height: 1; }
+
+/* 關卡地圖 */
+.world { display: flex; flex-direction: column; gap: 8px; }
+.world h3 { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; } .world h3 span { font: 13px var(--font-body); color: var(--ink2); }
+.levels { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.lv { text-align: left; border: 1.5px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 3px; min-height: 108px; position: relative; }
+.lv:hover:not(:disabled) { border-color: var(--accent); } .lv:disabled { opacity: .5; cursor: not-allowed; }
+.lv .id { font: 500 12px var(--font-mono); color: var(--ink2); } .lv .nm { font-weight: 700; } .lv .bl { font-size: 12.5px; color: var(--ink2); line-height: 1.4; }
+.stars { letter-spacing: 2px; color: var(--warn); font-size: 15px; } .stars i { font-style: normal; color: var(--line); }
+.tags { display: flex; gap: 4px; flex-wrap: wrap; } .tag { font-size: 11.5px; padding: 0 7px; border-radius: 6px; background: var(--surface2); color: var(--ink2); }
+
+/* 遊戲畫面 */
+.play { display: grid; grid-template-columns: minmax(0, 1fr) 372px; gap: 14px; align-items: start; }
+.stage { position: relative; background: var(--stage); border: 1.5px solid var(--line); border-radius: 14px; overflow: hidden; }
+.stage canvas { display: block; width: 100%; height: clamp(320px, 56vh, 620px); touch-action: none; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.stagebar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 10px; border-top: 1.5px solid var(--line); background: var(--surface); }
+.stagebar .seg button { padding: 3px 10px; min-height: 30px; font-size: 13px; }
+.slice { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-left: auto; } .slice input { width: 110px; accent-color: var(--accent); }
+.status { border-radius: 10px; padding: 8px 12px; font-size: 14px; border: 1.5px solid var(--line); background: var(--surface); min-height: 42px; display: flex; align-items: center; gap: 8px; }
+.status.ok { border-color: var(--good); color: var(--good); } .status.no { border-color: var(--bad); color: var(--bad); }
+.dotm { width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex: none; }
+.side { display: flex; flex-direction: column; gap: 12px; }
+.ctl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.axcol { border: 1.5px solid var(--axc); border-radius: 12px; padding: 6px; display: flex; flex-direction: column; gap: 6px; background: var(--surface); }
+.axcol.locked { opacity: .45; }
+.axh { font: 700 15px var(--font-mono); color: var(--axc); text-align: center; } .axh small { font: 12px var(--font-body); color: var(--ink2); margin-left: 4px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.cap { font-size: 11px; color: var(--ink2); text-align: center; line-height: 1; margin-top: 2px; }
+.abtn { min-height: 46px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface2); font-size: 16px; font-weight: 700; touch-action: manipulation; user-select: none; padding: 0; }
+.abtn:active:not(:disabled) { background: var(--axc); color: var(--surface); border-color: var(--axc); }
+.abtn:disabled { opacity: .4; cursor: not-allowed; }
+.abtn.rot { border-style: dashed; }
+.hl { animation: pulse 1.1s ease-in-out infinite; box-shadow: 0 0 0 3px var(--accent); z-index: 1; position: relative; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 25%, transparent); } }
+.acts { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; }
+.tray { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; scroll-snap-type: x proximity; }
+.pc { flex: none; width: 82px; scroll-snap-align: start; border: 1.5px solid var(--line); background: var(--surface); border-radius: 12px; padding: 4px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; }
+.pc canvas { width: 56px; height: 56px; } .pc .nm { font-size: 12px; line-height: 1.2; text-align: center; }
+.pc.held { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); } .pc.placed { opacity: .55; }
+.pc .ck { position: absolute; top: 3px; right: 5px; color: var(--good); font-weight: 700; }
+.pc .bar { position: absolute; left: 0; top: 8px; width: 5px; height: 26px; border-radius: 0 4px 4px 0; }
+.rule { display: flex; gap: 8px; font-size: 14px; align-items: flex-start; } .rule .rk { font-weight: 700; flex: none; width: 18px; text-align: center; } .rule.ok .rk { color: var(--good); } .rule.no .rk { color: var(--ink2); }
+.objs { display: flex; gap: 8px; flex-wrap: wrap; }
+.obj { flex: 1; min-width: 120px; text-align: left; border: 1.5px solid var(--line); border-radius: 12px; padding: 6px 10px; background: var(--surface); }
+.obj.sel { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.meter { height: 8px; border-radius: 4px; background: var(--surface2); overflow: hidden; margin-top: 4px; } .meter i { display: block; height: 100%; background: var(--accent); transition: width .2s; } .meter.full i { background: var(--good); }
+.chat { display: flex; flex-wrap: wrap; gap: 6px; } .chat .btn { font-size: 13px; padding: 3px 10px; min-height: 32px; }
+.ops { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.coach { position: absolute; left: 10px; right: 10px; top: 10px; background: var(--surface); border: 2px solid var(--accent); border-radius: 12px; padding: 10px 12px; box-shadow: 0 6px 20px rgb(0 0 0 / .18); font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
+.coach b.n { font: 500 12px var(--font-mono); color: var(--accent); }
+.overlay { position: absolute; inset: 0; background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 16px; text-align: center; }
+.overlay .box { background: var(--surface); border: 2px solid var(--line); border-radius: 16px; padding: 18px 22px; max-width: 360px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.big-stars { font-size: 34px; letter-spacing: 4px; color: var(--warn); } .big-stars i { font-style: normal; color: var(--line); }
+.help { font-size: 13px; color: var(--ink2); line-height: 1.5; } .help kbd { font: 12px var(--font-mono); background: var(--surface2); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+
+/* 回顧 */
+.review { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.stat { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+.stat div { background: var(--surface2); border-radius: 10px; padding: 8px 10px; } .stat b { display: block; font: 500 20px var(--font-mono); } .stat span { font-size: 12px; color: var(--ink2); }
+.bars { display: flex; flex-direction: column; gap: 6px; } .bars .b { display: grid; grid-template-columns: 80px 1fr 34px; gap: 8px; align-items: center; font-size: 13px; }
+.log { max-height: 220px; overflow: auto; font-size: 13px; display: flex; flex-direction: column; gap: 2px; } .log div { display: flex; gap: 8px; } .log .t { font-family: var(--font-mono); color: var(--ink2); flex: none; width: 44px; }
+.qchips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+@media (max-width: 960px) {
+  .play, .review, .hero { grid-template-columns: minmax(0, 1fr); }
+  .chips { margin-left: 0; }
+  .stage canvas { height: clamp(300px, 46vh, 520px); }
+}
+@media (prefers-reduced-motion: reduce) { .hl { animation: none; } }
+</style>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script>
+/* 心智拼圖 3D · 方塊幾何與解題引擎(純函式,不依賴畫面)
+   座標:x 往右、y 往上、z 往前(朝向玩家),右手座標系。1 單位 = 1 個方塊。 */
+var Cube3D = (function () {
+  /* ───── 矩陣(3×3,列優先,陣列長度 9) ───── */
+  var I = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+  var RX = [1, 0, 0, 0, 0, -1, 0, 1, 0]; /* (x,y,z)→(x,−z,y) */
+  var RY = [0, 0, 1, 0, 1, 0, -1, 0, 0]; /* (x,y,z)→(z,y,−x) */
+  var RZ = [0, -1, 0, 1, 0, 0, 0, 0, 1]; /* (x,y,z)→(−y,x,z) */
+  var AX = { x: RX, y: RY, z: RZ };
+  var MIRROR = [-1, 0, 0, 0, 1, 0, 0, 0, 1];
+
+  function mmul(A, B) {
+    var o = [], r, c;
+    for (r = 0; r < 3; r++) for (c = 0; c < 3; c++) o.push(A[r * 3] * B[c] + A[r * 3 + 1] * B[3 + c] + A[r * 3 + 2] * B[6 + c]);
+    return o;
+  }
+  function transpose(M) { return [M[0], M[3], M[6], M[1], M[4], M[7], M[2], M[5], M[8]]; }
+  function mapv(M, v) { return [M[0] * v[0] + M[1] * v[1] + M[2] * v[2], M[3] * v[0] + M[4] * v[1] + M[5] * v[2], M[6] * v[0] + M[7] * v[1] + M[8] * v[2]]; }
+  function mkey(M) { return M.join(','); }
+  /* 繞世界軸旋轉:dir=+1 為正向 90°,−1 為反向 */
+  function rotM(M, axis, dir) { return mmul(dir > 0 ? AX[axis] : transpose(AX[axis]), M); }
+
+  var ROTS = (function () {
+    var seen = {}, out = [I], q = [I]; seen[mkey(I)] = 1;
+    while (q.length) {
+      var m = q.shift();
+      ['x', 'y', 'z'].forEach(function (a) { var n = rotM(m, a, 1), k = mkey(n); if (!seen[k]) { seen[k] = 1; out.push(n); q.push(n); } });
+    }
+    return out;
+  })();
+
+  /* ───── 方塊組 ───── */
+  function norm(cells) {
+    var m = [Infinity, Infinity, Infinity];
+    cells.forEach(function (c) { for (var i = 0; i < 3; i++) if (c[i] < m[i]) m[i] = c[i]; });
+    return cells.map(function (c) { return [c[0] - m[0], c[1] - m[1], c[2] - m[2]]; })
+      .sort(function (a, b) { return a[1] - b[1] || a[2] - b[2] || a[0] - b[0]; });
+  }
+  function orient(cells, M) { return norm(cells.map(function (c) { return mapv(M, c); })); }
+  function key(cells) { return norm(cells).map(function (c) { return c.join(','); }).join(';'); }
+  function size(cells) {
+    var s = [0, 0, 0];
+    cells.forEach(function (c) { for (var i = 0; i < 3; i++) if (c[i] + 1 > s[i]) s[i] = c[i] + 1; });
+    return s;
+  }
+  function shift(cells, p) { return cells.map(function (c) { return [c[0] + p[0], c[1] + p[1], c[2] + p[2]]; }); }
+
+  var SHAPES = {
+    C1: { name: '單塊', cells: [[0, 0, 0]] },
+    I2: { name: '雙塊', cells: [[0, 0, 0], [1, 0, 0]] },
+    I3: { name: '長條 3', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0]] },
+    V3: { name: '小角', cells: [[0, 0, 0], [1, 0, 0], [0, 0, 1]] },
+    I4: { name: '長條 4', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]] },
+    O4: { name: '方片', cells: [[0, 0, 0], [1, 0, 0], [0, 0, 1], [1, 0, 1]] },
+    L4: { name: 'L 形', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 0, 1]] },
+    T4: { name: 'T 形', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 0, 1]] },
+    Z4: { name: 'Z 形', cells: [[0, 0, 0], [1, 0, 0], [1, 0, 1], [2, 0, 1]] },
+    P4: { name: '三叉', cells: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]] },
+    A4: { name: '左螺旋', cells: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1]] },
+    B4: { name: '右螺旋', cells: [[0, 0, 1], [1, 0, 1], [1, 1, 1], [1, 1, 0]] },
+    L5: { name: '長 L', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [3, 0, 1]] },
+    R5: { name: '扭轉 5', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 1]] },
+    K5: { name: '階梯 5', cells: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1], [2, 1, 1]] },
+    F5: { name: '旗形 5', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0], [2, 0, 1]] },
+    G6: { name: '歪角 6', cells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 1], [1, 1, 1]] }
+  };
+  function cellsOf(L, shape) { return (L.shapes && L.shapes[shape]) ? L.shapes[shape].cells : SHAPES[shape].cells; }
+  function nameOf(L, shape) { return (L.shapes && L.shapes[shape]) ? L.shapes[shape].name : SHAPES[shape].name; }
+
+  /* 某形狀所有不重複的方向(含或不含鏡像) */
+  var OCACHE = {};
+  function orientations(cells, mirror) {
+    var ck = key(cells) + (mirror ? 'm' : 'r');
+    if (OCACHE[ck]) return OCACHE[ck];
+    var seen = {}, out = [];
+    [false, true].forEach(function (mir) {
+      if (mir && !mirror) return;
+      ROTS.forEach(function (R) {
+        var M = mir ? mmul(R, MIRROR) : R, oc = orient(cells, M), k = key(oc);
+        if (!seen[k]) { seen[k] = 1; out.push({ M: M, cells: oc, key: k }); }
+      });
+    });
+    OCACHE[ck] = out; return out;
+  }
+
+  /* ───── 拼合題 ───── */
+  function boxCells(L) {
+    var holes = {}, out = [], x, y, z;
+    (L.holes || []).forEach(function (h) { holes[h.join(',')] = 1; });
+    for (y = 0; y < L.box[1]; y++) for (z = 0; z < L.box[2]; z++) for (x = 0; x < L.box[0]; x++) if (!holes[x + ',' + y + ',' + z]) out.push([x, y, z]);
+    return out;
+  }
+  function placementCells(L, p) { return shift(orient(cellsOf(L, p.shape), p.M), p.pos); }
+
+  function checkRules(L, placements) {
+    var by = {}, nx = L.box[0], ny = L.box[1], nz = L.box[2];
+    placements.forEach(function (p) { by[p.pid] = p; });
+    return (L.rules || []).map(function (rl) {
+      var p = by[rl.piece], ok = false, cs = p ? placementCells(L, p) : [];
+      if (rl.t === 'bottom') ok = !!p && cs.every(function (c) { return c[1] === 0; });
+      else if (rl.t === 'top') ok = !!p && cs.some(function (c) { return c[1] === ny - 1; });
+      else if (rl.t === 'corner') ok = !!p && cs.some(function (c) { return (c[0] === 0 || c[0] === nx - 1) && (c[1] === 0 || c[1] === ny - 1) && (c[2] === 0 || c[2] === nz - 1); });
+      else if (rl.t === 'floorOnly') ok = !!p && cs.some(function (c) { return c[1] === 0; });
+      return { id: rl.id, ok: ok, text: rl.text, rule: rl };
+    });
+  }
+
+  /* 解題器:在已固定的擺法上,找出能完成全部規則的擺法 */
+  function solve(L, fixed, limit) {
+    var occ = {}, allowed = {}, sols = [], count = 0, used = {}, placements = [];
+    var cells = boxCells(L);
+    cells.forEach(function (c) { allowed[c.join(',')] = 1; });
+    (fixed || []).forEach(function (p) {
+      placementCells(L, p).forEach(function (c) { occ[c.join(',')] = p.pid; });
+      used[p.pid] = 1; placements.push(p);
+    });
+    function rec() {
+      if (limit && count >= limit) return;
+      var first = null, i;
+      for (i = 0; i < cells.length; i++) if (!occ[cells[i].join(',')]) { first = cells[i]; break; }
+      if (!first) {
+        if (L.pieces.some(function (p) { return !p.optional && !used[p.id]; })) return;
+        if (checkRules(L, placements).every(function (r) { return r.ok; })) {
+          count++; sols.push(placements.map(function (p) { return { pid: p.pid, shape: p.shape, M: p.M, pos: p.pos }; }));
+        }
+        return;
+      }
+      for (var pi = 0; pi < L.pieces.length; pi++) {
+        var pc = L.pieces[pi]; if (used[pc.id]) continue;
+        var os = orientations(cellsOf(L, pc.shape), !!L.mirror);
+        for (var oi = 0; oi < os.length; oi++) {
+          var o = os[oi], a = o.cells[0];
+          var off = [first[0] - a[0], first[1] - a[1], first[2] - a[2]], ok = true, abs = [];
+          for (var k = 0; k < o.cells.length; k++) {
+            var c = [o.cells[k][0] + off[0], o.cells[k][1] + off[1], o.cells[k][2] + off[2]], kk = c.join(',');
+            if (!allowed[kk] || occ[kk]) { ok = false; break; }
+            abs.push(kk);
+          }
+          if (!ok) continue;
+          abs.forEach(function (kk) { occ[kk] = pc.id; });
+          used[pc.id] = 1; placements.push({ pid: pc.id, shape: pc.shape, M: o.M, pos: off });
+          rec();
+          placements.pop(); used[pc.id] = 0;
+          abs.forEach(function (kk) { delete occ[kk]; });
+          if (limit && count >= limit) return;
+        }
+      }
+    }
+    rec();
+    return sols;
+  }
+
+  /* ───── 旋轉題:最少步數 ───── */
+  /* 從 M0 出發,用允許的軸向旋轉,最少幾步讓方向和 targetKey 一樣。回傳 {steps, path:[{axis,dir}]} */
+  function minSteps(cells, M0, targetKey, axes) {
+    var seen = {}, q = [{ M: M0, path: [] }]; seen[mkey(M0)] = 1;
+    while (q.length) {
+      var cur = q.shift();
+      if (key(orient(cells, cur.M)) === targetKey) return { steps: cur.path.length, path: cur.path };
+      for (var i = 0; i < axes.length; i++) for (var d = -1; d <= 1; d += 2) {
+        var n = rotM(cur.M, axes[i], d), k = mkey(n);
+        if (seen[k]) continue; seen[k] = 1;
+        q.push({ M: n, path: cur.path.concat([{ axis: axes[i], dir: d }]) });
+      }
+    }
+    return null;
+  }
+  function distinctOrientations(cells) { return orientations(cells, false).length; }
+
+  /* ───── 亂數與隨機關卡 ───── */
+  function rng(seed) {
+    var a = seed >>> 0;
+    return function () { a |= 0; a = (a + 0x6D2B79F5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  var DIRS = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+
+  /* 隨機拼合:先把盒子切成幾塊,再打亂方向交給玩家,所以一定有解 */
+  function genPack(seed, diff) {
+    var rand = rng(seed);
+    var dimsByDiff = { easy: [[2, 2, 3], [3, 2, 2], [2, 3, 2]], medium: [[3, 3, 2], [3, 2, 3], [2, 3, 3], [4, 2, 3]], hard: [[3, 3, 3], [4, 3, 2], [3, 4, 2]] };
+    var sizeRange = { easy: [3, 4], medium: [3, 5], hard: [4, 5] }[diff];
+    var opts = dimsByDiff[diff], box = opts[Math.floor(rand() * opts.length)];
+    var all = []; for (var y = 0; y < box[1]; y++) for (var z = 0; z < box[2]; z++) for (var x = 0; x < box[0]; x++) all.push([x, y, z]);
+    for (var attempt = 0; attempt < 400; attempt++) {
+      var owner = {}, groups = [], ok = true;
+      var order = all.slice().sort(function () { return rand() - 0.5; });
+      for (var i = 0; i < order.length; i++) {
+        var s = order[i], sk = s.join(',');
+        if (owner[sk] != null) continue;
+        var target = sizeRange[0] + Math.floor(rand() * (sizeRange[1] - sizeRange[0] + 1)), g = [s];
+        owner[sk] = groups.length;
+        while (g.length < target) {
+          var cand = [];
+          g.forEach(function (c) { DIRS.forEach(function (d) { var n = [c[0] + d[0], c[1] + d[1], c[2] + d[2]], nk = n.join(','); if (n[0] >= 0 && n[1] >= 0 && n[2] >= 0 && n[0] < box[0] && n[1] < box[1] && n[2] < box[2] && owner[nk] == null) cand.push(n); }); });
+          if (!cand.length) break;
+          var pick = cand[Math.floor(rand() * cand.length)]; owner[pick.join(',')] = groups.length; g.push(pick);
+        }
+        groups.push(g);
+      }
+      groups.forEach(function (g) { if (g.length < sizeRange[0] - 1 || g.length > sizeRange[1]) ok = false; });
+      if (groups.length > 8 || groups.length < 2) ok = false;
+      if (!ok) continue;
+      var shapes = {}, pieces = [];
+      groups.forEach(function (g, gi) {
+        var id = 'g' + (gi + 1), cells = norm(g), mir = diff === 'easy';
+        var os = orientations(cells, false), pick = os[Math.floor(rand() * os.length)];
+        shapes[id] = { name: '拼塊 ' + String.fromCharCode(65 + gi), cells: pick.cells };
+        pieces.push({ id: String.fromCharCode(97 + gi), shape: id });
+      });
+      return { box: box, holes: [], pieces: pieces, shapes: shapes, mirror: false };
+    }
+    return null;
+  }
+
+  /* 隨機旋轉:找沒有對稱的方塊組,再抽一個目標方向 */
+  function genRot(seed, diff) {
+    var rand = rng(seed), cfg = { easy: { n: [4, 5], axes: ['x', 'y', 'z'], min: 2, max: 3, objs: 1 }, medium: { n: [5, 6], axes: ['x', 'y', 'z'], min: 3, max: 4, objs: 1 }, hard: { n: [5, 7], axes: ['x', 'z'], min: 4, max: 6, objs: 2 } }[diff];
+    var objs = [], total = 0, shapes = {};
+    for (var o = 0; o < cfg.objs; o++) {
+      var tries = 0, cells = null;
+      while (tries++ < 400) {
+        var n = cfg.n[0] + Math.floor(rand() * (cfg.n[1] - cfg.n[0] + 1)), g = [[0, 0, 0]], seen = { '0,0,0': 1 };
+        while (g.length < n) {
+          var c = g[Math.floor(rand() * g.length)], d = DIRS[Math.floor(rand() * 6)], nn = [c[0] + d[0], c[1] + d[1], c[2] + d[2]], nk = nn.join(',');
+          if (!seen[nk]) { seen[nk] = 1; g.push(nn); }
+        }
+        var nc = norm(g), sz = size(nc);
+        if (sz[0] > 4 || sz[1] > 4 || sz[2] > 4) continue;
+        if (distinctOrientations(nc) === 24) { cells = nc; break; }
+      }
+      if (!cells) return null;
+      var best = null;
+      for (var t = 0; t < 60; t++) {
+        var M = I, k = cfg.min + Math.floor(rand() * (cfg.max - cfg.min + 1));
+        for (var s = 0; s < k; s++) M = rotM(M, cfg.axes[Math.floor(rand() * cfg.axes.length)], rand() < 0.5 ? 1 : -1);
+        var ms = minSteps(cells, I, key(orient(cells, M)), cfg.axes);
+        if (ms && ms.steps >= cfg.min) { best = { M: M, steps: ms.steps }; break; }
+      }
+      if (!best) return null;
+      var sid = 'q' + (o + 1); shapes[sid] = { name: '物件 ' + (o + 1), cells: cells };
+      objs.push({ id: 'o' + (o + 1), shape: sid, targetM: best.M, opt: best.steps }); total += best.steps;
+    }
+    return { objects: objs, shapes: shapes, axes: cfg.axes, opt: total };
+  }
+
+  return {
+    I: I, RX: RX, RY: RY, RZ: RZ, AX: AX, MIRROR: MIRROR, ROTS: ROTS, SHAPES: SHAPES,
+    mmul: mmul, transpose: transpose, mapv: mapv, mkey: mkey, rotM: rotM, norm: norm, orient: orient, key: key, size: size, shift: shift,
+    cellsOf: cellsOf, nameOf: nameOf, orientations: orientations, boxCells: boxCells, placementCells: placementCells,
+    checkRules: checkRules, solve: solve, minSteps: minSteps, distinctOrientations: distinctOrientations, rng: rng,
+    genPack: genPack, genRot: genRot
+  };
+})();
+
+
+</script>
+<script>
+/* 心智拼圖 3D · 關卡資料(固定關卡 + 每日挑戰 + 隨機關) */
+var Levels3D = (function (C) {
+  function pieces(list) { return list.map(function (s, i) { return { id: String.fromCharCode(97 + i), shape: s }; }); }
+  function packCfg(box, shapes, o) {
+    o = o || {};
+    var L = { box: box, holes: o.holes || [], mirror: false, pieces: pieces(shapes), rules: [], shapes: o.shapes };
+    (o.optional || []).forEach(function (i) { L.pieces[i].optional = true; });
+    (o.rules || []).forEach(function (r, i) {
+      var pc = L.pieces[r[1].charCodeAt(0) - 97], nm = C.nameOf(L, pc.shape) + ' ' + r[1].toUpperCase();
+      var text = r[0] === 'bottom' ? '「' + nm + '」要整塊貼在最底層' : r[0] === 'top' ? '「' + nm + '」至少有一格碰到最頂層' : '「' + nm + '」要佔據盒子的一個角落';
+      L.rules.push({ id: 'r' + (i + 1), t: r[0], piece: r[1], text: text });
+    });
+    return L;
+  }
+  function par(L) { return L.pieces.filter(function (p) { return !p.optional; }).length; }
+
+  /* 旋轉題:指定要幾步才能轉到的目標方向 */
+  function pickTarget(shape, axes, opt, idx) {
+    var cells = C.SHAPES[shape].cells, hits = [];
+    C.ROTS.forEach(function (M) {
+      var r = C.minSteps(cells, C.I, C.key(C.orient(cells, M)), axes);
+      if (r && r.steps === opt) hits.push(M);
+    });
+    return hits[(idx || 0) % hits.length];
+  }
+  function rotCfg(spec, axes) {
+    var shapes = {}, objects = [], total = 0;
+    spec.forEach(function (o, i) {
+      var cells = C.SHAPES[o[0]].cells, id = 'o' + (i + 1), M = pickTarget(o[0], axes, o[1], o[2]);
+      shapes[o[0]] = { name: C.SHAPES[o[0]].name, cells: cells };
+      var r = C.minSteps(cells, C.I, C.key(C.orient(cells, M)), axes);
+      objects.push({ id: id, shape: o[0], targetM: M, opt: r.steps }); total += r.steps;
+    });
+    return { objects: objects, shapes: shapes, axes: axes, opt: total };
+  }
+
+  var WORLDS = [
+    { id: 1, name: '三軸入門', desc: '認識 X、Y、Z,學會移動與旋轉' },
+    { id: 2, name: '空間拼合', desc: '把不同形狀塞進同一個盒子' },
+    { id: 3, name: '規則與陷阱', desc: '多了限制條件與多餘的方塊' },
+    { id: 4, name: '大師挑戰', desc: '七巧立方與鏤空盒' },
+    { id: 5, name: '限時與限步', desc: '和時間、步數賽跑' }
+  ];
+
+  var FIXED = [
+    { id: 'P1', world: 1, mode: 'pack', name: '讓它站起來', blurb: '教學:用 X、Y、Z 旋轉與移動,把兩塊放進薄盒子', tutorial: true, build: function () { return packCfg([3, 2, 1], ['O4', 'I2']); } },
+    { id: 'R1', world: 1, mode: 'rot', name: '轉一下', blurb: '只能繞 Y 軸轉,讓方塊跟目標一樣', tutorial: true, build: function () { return rotCfg([['L4', 1, 0]], ['y']); } },
+    { id: 'P2', world: 1, mode: 'pack', name: '小角相遇', blurb: '兩個小角和一個雙塊', build: function () { return packCfg([2, 2, 2], ['V3', 'V3', 'I2']); } },
+    { id: 'R2', world: 1, mode: 'rot', name: '翻過來', blurb: '繞 X 軸翻轉 180°', build: function () { return rotCfg([['L5', 2, 0]], ['x']); } },
+    { id: 'P3', world: 1, mode: 'pack', name: '三明治', blurb: 'L 形與方片疊成實心盒', build: function () { return packCfg([2, 2, 3], ['L4', 'L4', 'O4']); } },
+
+    { id: 'P4', world: 2, mode: 'pack', name: '三層拼合', blurb: '長短不一的四塊', build: function () { return packCfg([3, 2, 2], ['V3', 'L4', 'I3', 'I2']); } },
+    { id: 'R3', world: 2, mode: 'rot', name: '兩軸合作', blurb: '只有 X 與 Z 可以用', build: function () { return rotCfg([['L5', 2, 1]], ['x', 'z']); } },
+    { id: 'P5', world: 2, mode: 'pack', name: '三叉與小角', blurb: '三叉要找對轉法', build: function () { return packCfg([2, 3, 2], ['P4', 'P4', 'V3', 'C1']); } },
+    { id: 'R4', world: 2, mode: 'rot', name: '斜轉', blurb: 'X、Y 兩軸要三步', build: function () { return rotCfg([['R5', 3, 0]], ['x', 'y']); } },
+    { id: 'P6', world: 2, mode: 'pack', name: '螺旋一家', blurb: '左右螺旋是鏡像,不能互換', build: function () { return packCfg([3, 3, 2], ['I2', 'Z4', 'A4', 'B4', 'O4']); } },
+
+    { id: 'P7', world: 3, mode: 'pack', name: '各就各位', blurb: '有兩條位置規則', build: function () { return packCfg([3, 3, 2], ['V3', 'V3', 'A4', 'B4', 'T4'], { rules: [['bottom', 'e'], ['top', 'a']] }); } },
+    { id: 'R5', world: 3, mode: 'rot', name: '三軸全開', blurb: '最少三步', build: function () { return rotCfg([['G6', 3, 2]], ['x', 'y', 'z']); } },
+    { id: 'P8', world: 3, mode: 'pack', name: '四個角落', blurb: '好幾塊要佔角落', build: function () { return packCfg([3, 3, 2], ['O4', 'O4', 'L4', 'L4', 'I2'], { rules: [['corner', 'a'], ['corner', 'd'], ['bottom', 'b'], ['corner', 'e']] }); } },
+    { id: 'P9', world: 3, mode: 'pack', name: '多出來的一塊', blurb: '有一塊用不到,先想清楚', build: function () { return packCfg([3, 3, 2], ['L4', 'L4', 'O4', 'Z4', 'C1'], { holes: [[1, 0, 1], [1, 1, 1]], optional: [4] }); } },
+
+    { id: 'P10', world: 4, mode: 'pack', name: '七巧立方', blurb: '七塊拼成 3×3×3', build: function () { return packCfg([3, 3, 3], ['V3', 'L4', 'T4', 'Z4', 'A4', 'B4', 'P4']); } },
+    { id: 'R6', world: 4, mode: 'rot', name: '雙物件', blurb: '兩個方塊都要對準,輪流調整', build: function () { return rotCfg([['L5', 2, 0], ['F5', 3, 1]], ['x', 'y', 'z']); } },
+    { id: 'P11', world: 4, mode: 'pack', name: '鏤空盒', blurb: '盒子有四格被挖空,還有備用塊', build: function () { return packCfg([4, 3, 2], ['L4', 'T4', 'Z4', 'P4', 'O4', 'I2'], { holes: [[1, 0, 1], [2, 1, 1], [0, 0, 0], [3, 1, 0]], optional: [5], rules: [['bottom', 'b'], ['top', 'e']] }); } },
+    { id: 'P12', world: 4, mode: 'pack', name: '七巧加規則', blurb: '七巧立方加上三條規則,只有一種解', build: function () { return packCfg([3, 3, 3], ['V3', 'L4', 'T4', 'Z4', 'A4', 'B4', 'P4'], { rules: [['bottom', 'b'], ['top', 'g'], ['corner', 'e']] }); } },
+
+    { id: 'P13', world: 5, mode: 'pack', name: '限時拼合', blurb: '150 秒內完成', timeLimit: 150, build: function () { return packCfg([3, 3, 2], ['I2', 'Z4', 'A4', 'B4', 'O4']); } },
+    { id: 'R7', world: 5, mode: 'rot', name: '步數限制', blurb: '只能多花 1 步', stepExtra: 1, build: function () { return rotCfg([['L5', 4, 0]], ['x', 'z']); } },
+    { id: 'P14', world: 5, mode: 'pack', name: '少走冤枉路', blurb: '放置與取回合計不能超過 塊數+2', stepExtra: 2, build: function () { return packCfg([3, 3, 2], ['O4', 'O4', 'L4', 'L4', 'I2']); } },
+    { id: 'R8', world: 5, mode: 'rot', name: '雙物件限時', blurb: '120 秒,X 與 Z 軸', timeLimit: 120, stepExtra: 3, build: function () { return rotCfg([['L5', 3, 0], ['G6', 3, 1]], ['x', 'z']); } },
+    { id: 'R9', world: 5, mode: 'rot', name: '三物件大賽', blurb: '三個方塊,180 秒', timeLimit: 180, stepExtra: 4, build: function () { return rotCfg([['L5', 2, 2], ['F5', 3, 0], ['R5', 3, 1]], ['x', 'y', 'z']); } }
+  ];
+
+  function lvl(f) {
+    var cfg = f.build(), L = { id: f.id, world: f.world, mode: f.mode, name: f.name, blurb: f.blurb, tutorial: !!f.tutorial, timeLimit: f.timeLimit || 0, cfg: cfg };
+    if (f.mode === 'pack') { L.par = par(cfg); L.stepLimit = f.stepExtra != null ? L.par + f.stepExtra : 0; }
+    else { L.par = cfg.opt; L.stepLimit = f.stepExtra != null ? cfg.opt + f.stepExtra : 0; }
+    return L;
+  }
+  var CACHE = {};
+  function get(id) {
+    if (!CACHE[id]) { var f = FIXED.filter(function (x) { return x.id === id; })[0]; if (f) CACHE[id] = lvl(f); }
+    return CACHE[id];
+  }
+  function all() { return FIXED.map(function (f) { return get(f.id); }); }
+
+  /* 動態關卡:隨機 / 每日 */
+  function dynamic(kind, mode, diff, seed, tag) {
+    var cfg = null, tries = 0;
+    while (!cfg && tries < 40) {
+      cfg = mode === 'pack' ? C.genPack(seed + tries * 101, diff) : C.genRot(seed + tries * 101, diff);
+      if (cfg && mode === 'pack' && !C.solve(cfg, [], 1).length) cfg = null;
+      tries++;
+    }
+    if (!cfg) return null;
+    var L = { id: kind + ':' + mode + ':' + seed, world: 0, mode: mode, name: tag, blurb: '', tutorial: false, cfg: cfg, dynamic: kind };
+    if (mode === 'pack') { cfg.rules = []; L.par = par(cfg); L.timeLimit = diff === 'hard' ? 240 : diff === 'medium' ? 180 : 0; L.stepLimit = 0; }
+    else { L.par = cfg.opt; L.timeLimit = diff === 'hard' ? 150 : 0; L.stepLimit = diff === 'easy' ? 0 : cfg.opt + 3; }
+    if (kind === 'daily') { L.timeLimit = mode === 'pack' ? 240 : 150; }
+    return L;
+  }
+  function taipeiDate() {
+    try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); }
+    catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+  function dateSeed(s) { return parseInt(s.replace(/-/g, ''), 10); }
+  function daily() {
+    var d = taipeiDate(), s = dateSeed(d);
+    return { date: d, pack: dynamic('daily', 'pack', 'medium', s, '每日拼合 ' + d.slice(5)), rot: dynamic('daily', 'rot', 'medium', s + 7, '每日旋轉 ' + d.slice(5)) };
+  }
+  function random(mode, diff) { return dynamic('random', mode, diff, Math.floor(Math.random() * 1e6) + 1, (mode === 'pack' ? '隨機拼合' : '隨機旋轉') + ' · ' + { easy: '簡單', medium: '中等', hard: '困難' }[diff]); }
+
+  return { WORLDS: WORLDS, FIXED: FIXED, get: get, all: all, daily: daily, random: random, par: par, taipeiDate: taipeiDate };
+})(typeof Cube3D !== 'undefined' ? Cube3D : require('./cube3d.js'));
+
+
+</script>
+<script>
+/* 心智拼圖 3D · 立體畫面引擎(Canvas 2D,透視相機 + 畫家演算法)
+   世界座標:x 往右、y 往上、z 朝向玩家。顏色從 CSS 變數讀取,所以淺色/深色主題都會跟著變。 */
+var R3D = (function () {
+  var LIGHT = (function () { var v = [-0.35, 0.85, 0.4], l = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]); return [v[0] / l, v[1] / l, v[2] / l]; })();
+  var FACES = [
+    { n: [1, 0, 0], v: [[1, 0, 0], [1, 1, 0], [1, 1, 1], [1, 0, 1]] },
+    { n: [-1, 0, 0], v: [[0, 0, 0], [0, 0, 1], [0, 1, 1], [0, 1, 0]] },
+    { n: [0, 1, 0], v: [[0, 1, 0], [0, 1, 1], [1, 1, 1], [1, 1, 0]] },
+    { n: [0, -1, 0], v: [[0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1]] },
+    { n: [0, 0, 1], v: [[0, 0, 1], [1, 0, 1], [1, 1, 1], [0, 1, 1]] },
+    { n: [0, 0, -1], v: [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 0, 0]] }
+  ];
+  var AXIS_VEC = { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
+
+  /* ───── 顏色 ───── */
+  var palCache = null, palStamp = 0;
+  function pal() {
+    var now = Date.now();
+    if (palCache && now - palStamp < 400) return palCache;
+    var cs = getComputedStyle(document.documentElement), o = {};
+    ['p0', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'hole', 'ink', 'ink2', 'line', 'accent', 'good', 'bad', 'floorA', 'floorB', 'wall', 'ax', 'ay', 'az', 'bg', 'surface'].forEach(function (k) { o[k] = (cs.getPropertyValue('--' + k) || '').trim() || '#888888'; });
+    palCache = o; palStamp = now; return o;
+  }
+  function rgb(c) {
+    if (c.charAt(0) === '#') {
+      if (c.length === 4) return [parseInt(c[1] + c[1], 16), parseInt(c[2] + c[2], 16), parseInt(c[3] + c[3], 16)];
+      return [parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
+    }
+    var m = c.match(/[\d.]+/g); return m ? [+m[0], +m[1], +m[2]] : [128, 128, 128];
+  }
+  function css(c, k, a, glow) {
+    var r = c[0] * k, g = c[1] * k, b = c[2] * k;
+    if (glow) { r += (255 - r) * glow; g += (255 - g) * glow; b += (255 - b) * glow; }
+    return 'rgba(' + Math.max(0, Math.min(255, r | 0)) + ',' + Math.max(0, Math.min(255, g | 0)) + ',' + Math.max(0, Math.min(255, b | 0)) + ',' + a + ')';
+  }
+  function col(P, k) { return P[k] || k; }
+
+  /* ───── 相機 ───── */
+  function mkCam() { return { az: 0.62, el: 0.5, k: 1, tx: 0, ty: 0, tz: 0, fov: 40 * Math.PI / 180 }; }
+  var PRESETS = { iso: { az: 0.62, el: 0.5 }, front: { az: 0, el: 0.12 }, right: { az: Math.PI / 2, el: 0.12 }, top: { az: 0, el: 1.4 } };
+  function basis(cam, dist) {
+    var ce = Math.cos(cam.el), se = Math.sin(cam.el);
+    var pos = [cam.tx + dist * ce * Math.sin(cam.az), cam.ty + dist * se, cam.tz + dist * ce * Math.cos(cam.az)];
+    var f = [cam.tx - pos[0], cam.ty - pos[1], cam.tz - pos[2]], l = Math.sqrt(f[0] * f[0] + f[1] * f[1] + f[2] * f[2]);
+    f = [f[0] / l, f[1] / l, f[2] / l];
+    var r = [f[1] * 0 - f[2] * 1, f[2] * 0 - f[0] * 0, f[0] * 1 - f[1] * 0]; /* f × up(0,1,0) */
+    var rl = Math.sqrt(r[0] * r[0] + r[2] * r[2]) || 1; r = [r[0] / rl, 0, r[2] / rl];
+    var u = [r[1] * f[2] - r[2] * f[1], r[2] * f[0] - r[0] * f[2], r[0] * f[1] - r[1] * f[0]];
+    return { pos: pos, f: f, r: r, u: u };
+  }
+  function easeOut(t) { t = Math.max(0, Math.min(1, t)); return 1 - Math.pow(1 - t, 3); }
+  function rotAxis(p, axis, ang, c) {
+    var x = p[0] - c[0], y = p[1] - c[1], z = p[2] - c[2], s = Math.sin(ang), co = Math.cos(ang), a, b;
+    if (axis === 'x') { a = y * co - z * s; b = y * s + z * co; return [x + c[0], a + c[1], b + c[2]]; }
+    if (axis === 'y') { a = z * co + x * s; b = -z * s + x * co; return [b + c[0], y + c[1], a + c[2]]; }
+    a = x * co - y * s; b = x * s + y * co; return [a + c[0], b + c[1], z + c[2]];
+  }
+
+  /* ───── 畫一個場景 ─────
+     scene = { radius, center:[x,y,z], box:{n:[nx,ny,nz]}|null, solids:[{cells,color,alpha,tag,hl,ghost,ok,dashed,glow,anim,off}],
+               maxY, labels, axes3d:{origin,len}|null, flash:{axis,t}, glow, floor:{...}} */
+  function draw(ctx, rect, scene, cam, now) {
+    var P = pal(), dist = Math.max(3, scene.radius * 2.6 * cam.k);
+    var B = basis(cam, dist), focal = Math.min(rect.w, rect.h) / 2 / Math.tan(cam.fov / 2) * 0.98;
+    var cx = rect.x + rect.w / 2, cy = rect.y + rect.h / 2, pos = B.pos, animating = false;
+    cam.tx = scene.center[0]; cam.ty = scene.center[1]; cam.tz = scene.center[2];
+    B = basis(cam, dist); pos = B.pos;
+    function proj(p) {
+      var dx = p[0] - pos[0], dy = p[1] - pos[1], dz = p[2] - pos[2];
+      var zc = dx * B.f[0] + dy * B.f[1] + dz * B.f[2]; if (zc < 0.2) return null;
+      return [cx + focal * (dx * B.r[0] + dy * B.r[1] + dz * B.r[2]) / zc, cy - focal * (dx * B.u[0] + dy * B.u[1] + dz * B.u[2]) / zc, zc];
+    }
+    function dist2(p) { var dx = p[0] - pos[0], dy = p[1] - pos[1], dz = p[2] - pos[2]; return dx * dx + dy * dy + dz * dz; }
+    var prims = [], lines = [];
+
+    /* 清掉這個區域 */
+    ctx.save(); ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+
+    /* 地板與牆面 */
+    if (scene.box) {
+      var nx = scene.box.n[0], ny = scene.box.n[1], nz = scene.box.n[2], i, j;
+      var ccx = nx / 2, ccz = nz / 2, backX = pos[0] > ccx ? 0 : nx, backZ = pos[2] > ccz ? 0 : nz;
+      var fa = rgb(P.floorA), fb = rgb(P.floorB), wl = rgb(P.wall);
+      function quad(a, b, c, d, fill, stroke) {
+        var A = proj(a), Bp = proj(b), C = proj(c), D = proj(d); if (!A || !Bp || !C || !D) return;
+        ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(Bp[0], Bp[1]); ctx.lineTo(C[0], C[1]); ctx.lineTo(D[0], D[1]); ctx.closePath();
+        if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
+      }
+      /* 後牆(x 牆與 z 牆) */
+      for (j = 0; j < ny; j++) for (i = 0; i < nz; i++) quad([backX, j, i], [backX, j, i + 1], [backX, j + 1, i + 1], [backX, j + 1, i], css(wl, 1, (i + j) % 2 ? 0.55 : 0.8), css(rgb(P.line), 1, 0.5));
+      for (j = 0; j < ny; j++) for (i = 0; i < nx; i++) quad([i, j, backZ], [i + 1, j, backZ], [i + 1, j + 1, backZ], [i, j + 1, backZ], css(wl, 1, (i + j) % 2 ? 0.55 : 0.8), css(rgb(P.line), 1, 0.5));
+      /* 地板 */
+      for (j = 0; j < nz; j++) for (i = 0; i < nx; i++) quad([i, 0, j], [i + 1, 0, j], [i + 1, 0, j + 1], [i, 0, j + 1], css((i + j) % 2 ? fa : fb, 1, 1), css(rgb(P.line), 1, 0.7));
+    } else if (scene.pad) {
+      var pr = scene.pad, fa2 = rgb(P.floorA), fb2 = rgb(P.floorB);
+      for (var pj = -pr; pj < pr; pj++) for (var pi = -pr; pi < pr; pi++) {
+        var q = [[pi, scene.padY, pj], [pi + 1, scene.padY, pj], [pi + 1, scene.padY, pj + 1], [pi, scene.padY, pj + 1]].map(proj);
+        if (q.some(function (z) { return !z; })) continue;
+        ctx.beginPath(); ctx.moveTo(q[0][0], q[0][1]); for (var qi = 1; qi < 4; qi++) ctx.lineTo(q[qi][0], q[qi][1]); ctx.closePath();
+        ctx.fillStyle = css((pi + pj) % 2 ? fa2 : fb2, 1, 0.9); ctx.fill(); ctx.strokeStyle = css(rgb(P.line), 1, 0.55); ctx.lineWidth = 1; ctx.stroke();
+      }
+    }
+
+    /* 實心方塊 → 面 */
+    var occ = {}, solids = scene.solids || [];
+    solids.forEach(function (s) {
+      if (s.ghost || s.outline) return;
+      s._c = s.cells.filter(function (c) { return scene.maxY == null || c[1] <= scene.maxY; });
+      s._c.forEach(function (c) { occ[c.join(',')] = 1; });
+    });
+    solids.forEach(function (s) {
+      var free = s.ghost || s.outline, cells = free ? s.cells : s._c, own = {}, base = rgb(col(P, s.color)), a = s.alpha == null ? 1 : s.alpha, off = [0, 0, 0], ang = 0, axis = null, rc = null;
+      if (free) cells.forEach(function (c) { own[c.join(',')] = 1; });
+      if (s.anim) {
+        var an = s.anim, t = (now - an.t0) / an.dur;
+        if (t < 1) {
+          animating = true; var e = 1 - easeOut(t);
+          if (an.off) off = [an.off[0] * e, an.off[1] * e, an.off[2] * e];
+          if (an.rot) { axis = an.rot.axis; ang = -an.rot.dir * Math.PI / 2 * e; var sum = [0, 0, 0]; cells.forEach(function (c) { sum[0] += c[0] + .5; sum[1] += c[1] + .5; sum[2] += c[2] + .5; }); rc = [sum[0] / cells.length, sum[1] / cells.length, sum[2] / cells.length]; }
+        }
+      }
+      cells.forEach(function (c) {
+        FACES.forEach(function (F) {
+          var nk = (c[0] + F.n[0]) + ',' + (c[1] + F.n[1]) + ',' + (c[2] + F.n[2]);
+          if (free ? own[nk] : occ[nk]) return;
+          var n = F.n, vs = F.v.map(function (v) {
+            var p = [c[0] + v[0], c[1] + v[1], c[2] + v[2]];
+            if (axis) p = rotAxis(p, axis, ang, rc);
+            return [p[0] + off[0], p[1] + off[1], p[2] + off[2]];
+          });
+          if (axis) n = rotAxis(n, axis, ang, [0, 0, 0]);
+          var ctr = [(vs[0][0] + vs[2][0]) / 2, (vs[0][1] + vs[2][1]) / 2, (vs[0][2] + vs[2][2]) / 2];
+          if (n[0] * (pos[0] - ctr[0]) + n[1] * (pos[1] - ctr[1]) + n[2] * (pos[2] - ctr[2]) <= 0) return;
+          var pts = vs.map(proj); if (pts.some(function (z) { return !z; })) return;
+          var lit = 0.5 + 0.5 * Math.max(0, n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]);
+          var fill, stroke, lw = 1.2, dash = null;
+          if (s.ghost) {
+            var gc = rgb(s.ok ? P.good : P.bad); fill = css(gc, 0.6 + 0.4 * lit, 0.5); stroke = css(gc, 0.7, 0.95); lw = 2;
+          } else if (s.outline) { fill = css(base, lit, 0.1); stroke = css(base, 0.85, 0.95); lw = 2; dash = [5, 4]; }
+          else { fill = css(base, lit, a, s.glow || scene.glow); stroke = s.hl ? css(rgb(P.accent), 1, 1) : css(base, 0.5, 0.75); if (s.hl) lw = 2.4; }
+          prims.push({ pts: pts, d: dist2(ctr), fill: fill, stroke: stroke, lw: lw, dash: dash, tag: s.tag, top: !!s.hl });
+        });
+      });
+    });
+
+    /* 座標軸線(畫在方塊之間,參與深度排序) */
+    var ax3 = scene.axes3d;
+    if (ax3) {
+      ['x', 'y', 'z'].forEach(function (k) {
+        var v = AXIS_VEC[k], o = ax3.origin, L1 = ax3.len[k], neg = ax3.neg || 0;
+        var a = [o[0] - v[0] * neg, o[1] - v[1] * neg, o[2] - v[2] * neg], b = [o[0] + v[0] * L1, o[1] + v[1] * L1, o[2] + v[2] * L1];
+        var pa = proj(a), pb = proj(b); if (!pa || !pb) return;
+        var flash = scene.flash && scene.flash.axis === k && now - scene.flash.t < 700; if (flash) animating = true;
+        lines.push({ a: pa, b: pb, d: dist2(b), color: P['a' + k] || P['a' + k.toUpperCase()] || P['a' + k], k: k, w: flash ? 4.5 : 2.2, label: k.toUpperCase() });
+      });
+    }
+    var items = prims.map(function (p) { return { t: 'f', d: p.d, p: p }; }).concat(lines.map(function (l) { return { t: 'l', d: l.d, p: l }; }));
+    items.sort(function (a, b) { return b.d - a.d; });
+    var axCol = { x: P.ax, y: P.ay, z: P.az };
+    items.forEach(function (it) {
+      var p = it.p;
+      if (it.t === 'f') {
+        ctx.beginPath(); ctx.moveTo(p.pts[0][0], p.pts[0][1]); for (var i = 1; i < 4; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]); ctx.closePath();
+        ctx.fillStyle = p.fill; ctx.fill();
+        ctx.setLineDash(p.dash || []); ctx.strokeStyle = p.stroke; ctx.lineWidth = p.lw; ctx.lineJoin = 'round'; ctx.stroke(); ctx.setLineDash([]);
+      } else {
+        ctx.strokeStyle = axCol[p.k]; ctx.lineWidth = p.w; ctx.lineCap = 'round'; ctx.globalAlpha = 0.9;
+        ctx.beginPath(); ctx.moveTo(p.a[0], p.a[1]); ctx.lineTo(p.b[0], p.b[1]); ctx.stroke(); ctx.globalAlpha = 1;
+        var dx = p.b[0] - p.a[0], dy = p.b[1] - p.a[1], dl = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / dl, uy = dy / dl;
+        ctx.fillStyle = axCol[p.k]; ctx.beginPath(); ctx.moveTo(p.b[0] + ux * 6, p.b[1] + uy * 6); ctx.lineTo(p.b[0] - ux * 5 - uy * 5, p.b[1] - uy * 5 + ux * 5); ctx.lineTo(p.b[0] - ux * 5 + uy * 5, p.b[1] - uy * 5 - ux * 5); ctx.closePath(); ctx.fill();
+        ctx.font = '700 13px "DM Mono", ui-monospace, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.lineWidth = 3; ctx.strokeStyle = P.surface; ctx.strokeText(p.label, p.b[0] + ux * 16, p.b[1] + uy * 16);
+        ctx.fillStyle = axCol[p.k]; ctx.fillText(p.label, p.b[0] + ux * 16, p.b[1] + uy * 16);
+      }
+    });
+
+    /* 盒子邊框 + 刻度 */
+    if (scene.box) {
+      var n3 = scene.box.n, e = [];
+      for (var ix = 0; ix < 2; ix++) for (var iy = 0; iy < 2; iy++) for (var iz = 0; iz < 2; iz++) {
+        var p0 = [ix * n3[0], iy * n3[1], iz * n3[2]];
+        if (!ix) e.push([p0, [n3[0], p0[1], p0[2]]]); if (!iy) e.push([p0, [p0[0], n3[1], p0[2]]]); if (!iz) e.push([p0, [p0[0], p0[1], n3[2]]]);
+      }
+      ctx.strokeStyle = css(rgb(P.ink2), 1, 0.55); ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+      e.forEach(function (s) { var a = proj(s[0]), b = proj(s[1]); if (!a || !b) return; ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); });
+      ctx.setLineDash([]);
+      if (scene.labels) {
+        ctx.font = '500 11px "DM Mono", ui-monospace, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        var nearZ = pos[2] > n3[2] / 2 ? n3[2] + 0.55 : -0.55, nearX = pos[0] > n3[0] / 2 ? n3[0] + 0.55 : -0.55;
+        var farX = pos[0] > n3[0] / 2 ? -0.5 : n3[0] + 0.5, farZ = pos[2] > n3[2] / 2 ? -0.5 : n3[2] + 0.5;
+        function lab(p, t, c) { var q = proj(p); if (!q) return; ctx.lineWidth = 3; ctx.strokeStyle = P.surface; ctx.strokeText(t, q[0], q[1]); ctx.fillStyle = c; ctx.fillText(t, q[0], q[1]); }
+        for (var lx = 0; lx < n3[0]; lx++) lab([lx + 0.5, 0, nearZ], String(lx), P.ax);
+        for (var lz = 0; lz < n3[2]; lz++) lab([nearX, 0, lz + 0.5], String(lz), P.az);
+        for (var ly = 0; ly < n3[1]; ly++) lab([farX, ly + 0.5, farZ], String(ly), P.ay);
+      }
+    }
+
+    /* 角落的座標軸小羅盤 */
+    if (scene.gizmo !== false) {
+      var gx = rect.x + 38, gy = rect.y + rect.h - 38, Lg = 26, gl = ['x', 'y', 'z'].map(function (k) {
+        var v = AXIS_VEC[k];
+        return { k: k, sx: v[0] * B.r[0] + v[1] * B.r[1] + v[2] * B.r[2], sy: -(v[0] * B.u[0] + v[1] * B.u[1] + v[2] * B.u[2]), dz: v[0] * B.f[0] + v[1] * B.f[1] + v[2] * B.f[2] };
+      }).sort(function (a, b) { return b.dz - a.dz; });
+      ctx.fillStyle = css(rgb(P.surface), 1, 0.7); ctx.beginPath(); ctx.arc(gx, gy, 34, 0, 6.283); ctx.fill();
+      gl.forEach(function (g) {
+        ctx.strokeStyle = axCol[g.k]; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx + g.sx * Lg, gy + g.sy * Lg); ctx.stroke();
+        ctx.fillStyle = axCol[g.k]; ctx.beginPath(); ctx.arc(gx + g.sx * Lg, gy + g.sy * Lg, 8, 0, 6.283); ctx.fill();
+        ctx.fillStyle = P.surface; ctx.font = '700 10px "DM Mono", ui-monospace, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(g.k.toUpperCase(), gx + g.sx * Lg, gy + g.sy * Lg + 0.5);
+      });
+    }
+
+    if (scene.title) {
+      ctx.font = '700 13px "Noto Sans TC", system-ui, sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      var tw = ctx.measureText(scene.title).width + 16; ctx.fillStyle = css(rgb(P.surface), 1, 0.85); ctx.fillRect(rect.x + 8, rect.y + 8, tw, 24);
+      ctx.fillStyle = scene.titleColor ? col(P, scene.titleColor) : P.ink; ctx.fillText(scene.title, rect.x + 16, rect.y + 13);
+    }
+    ctx.restore();
+    return { prims: prims.sort(function (a, b) { return a.d - b.d; }), animating: animating };
+  }
+
+  function inPoly(pts, x, y) {
+    var s = 0, i;
+    for (i = 0; i < pts.length; i++) {
+      var a = pts[i], b = pts[(i + 1) % pts.length], c = (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]);
+      if (c !== 0) { if (s === 0) s = c > 0 ? 1 : -1; else if ((c > 0 ? 1 : -1) !== s) return false; }
+    }
+    return true;
+  }
+  function hit(prims, x, y) {
+    for (var i = 0; i < prims.length; i++) if (prims[i].tag && inPoly(prims[i].pts, x, y)) return prims[i].tag; /* prims 依距離近→遠排序 */
+    return null;
+  }
+
+  /* 小縮圖(托盤用) */
+  function thumb(canvas, cells, colorKey, px) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1); canvas.width = px * dpr; canvas.height = px * dpr;
+    var ctx = canvas.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, px, px);
+    var mx = [0, 0, 0]; cells.forEach(function (c) { for (var i = 0; i < 3; i++) if (c[i] + 1 > mx[i]) mx[i] = c[i] + 1; });
+    var cam = mkCam(); cam.az = 0.7; cam.el = 0.5;
+    draw(ctx, { x: 0, y: 0, w: px, h: px }, { radius: Math.sqrt(mx[0] * mx[0] + mx[1] * mx[1] + mx[2] * mx[2]) / 2 + 0.2, center: [mx[0] / 2, mx[1] / 2, mx[2] / 2], solids: [{ cells: cells, color: colorKey }], gizmo: false }, cam, Date.now());
+  }
+
+  return { draw: draw, hit: hit, thumb: thumb, mkCam: mkCam, PRESETS: PRESETS, easeOut: easeOut, pal: pal };
+})();
+
+
+</script>
+<script>
+const { useState, useEffect, useRef, useReducer, useMemo, useCallback } = React;
+const C = Cube3D, LV = Levels3D, R = R3D;
+const AXES = ["x", "y", "z"];
+const AXI = { x: 0, y: 1, z: 2 };
+const AXN = { x: "X \u5DE6\u53F3", y: "Y \u4E0A\u4E0B", z: "Z \u524D\u5F8C" };
+const MAXHINT = 3, HINT_COST = 2;
+const TAGS = ["\u6211\u4F86\u64CD\u4F5C", "\u63DB\u4F60\u64CD\u4F5C", "\u5148\u770B\u54EA\u4E00\u9762?", "\u9019\u908A\u6703\u5361\u5230", "\u518D\u78BA\u8A8D\u4E00\u6B21", "\u597D,\u653E\u4E0B\u53BB"];
+const KEY = "mindpuzzle3d.v1";
+function loadProg() {
+  const d = { stars: {}, points: 0, unlockAll: false, sound: false, tut: {}, daily: {}, notes: [] };
+  try {
+    const j = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (j) return Object.assign(d, j);
+  } catch (e) {
+  }
+  return d;
+}
+function saveProg(p) {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(p));
+  } catch (e) {
+  }
+}
+let AC = null;
+function sfx(kind) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const seq = { move: [[520, 0.04]], place: [[220, 0.09], [330, 0.09]], bad: [[150, 0.14]], win: [[523, 0.1], [659, 0.1], [784, 0.1], [1047, 0.2]], hint: [[440, 0.08], [560, 0.08]] }[kind] || [];
+    let t = AC.currentTime;
+    seq.forEach(([f, d]) => {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = kind === "bad" ? "sawtooth" : "triangle";
+      o.frequency.value = f;
+      g.gain.setValueAtTime(1e-4, t);
+      g.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(1e-4, t + d);
+      o.connect(g);
+      g.connect(AC.destination);
+      o.start(t);
+      o.stop(t + d + 0.02);
+      t += d;
+    });
+  } catch (e) {
+  }
+}
+const pieceOf = (L, pid) => L.pieces.find((p) => p.id === pid);
+const pidIndex = (L, pid) => L.pieces.findIndex((p) => p.id === pid);
+const colorOf = (L, pid) => "p" + pidIndex(L, pid) % 7;
+const pname = (L, pid) => pid.toUpperCase() + " " + C.nameOf(L, pieceOf(L, pid).shape);
+const cellsOfHeld = (L, h) => C.placementCells(L, { shape: pieceOf(L, h.pid).shape, M: h.M, pos: h.pos });
+function clampPos(L, h) {
+  const sz = C.size(C.orient(C.cellsOf(L, pieceOf(L, h.pid).shape), h.M)), b = L.box;
+  return [0, 1, 2].map((i) => sz[i] > b[i] ? 0 : Math.max(0, Math.min(b[i] - sz[i], h.pos[i])));
+}
+function validate(L, placed, h) {
+  const cells = cellsOfHeld(L, h), b = L.box;
+  for (const c of cells) for (let i = 0; i < 3; i++) {
+    if (c[i] < 0) return { ok: false, cells, text: `\u8D85\u51FA\u76D2\u5B50:${AXN[AXES[i]].split(" ")[0]} \u592A\u5C0F,\u5F80 \uFF0B \u79FB` };
+    if (c[i] >= b[i]) return { ok: false, cells, text: `\u8D85\u51FA\u76D2\u5B50:${AXN[AXES[i]].split(" ")[0]} \u592A\u5927,\u5F80 \u2212 \u79FB` };
+  }
+  const holes = {};
+  (L.holes || []).forEach((x) => {
+    holes[x.join(",")] = 1;
+  });
+  if (cells.some((c) => holes[c.join(",")])) return { ok: false, cells, text: "\u5361\u5230\u93E4\u7A7A\u7684\u683C\u5B50" };
+  for (const p of placed) {
+    const occ = {};
+    C.placementCells(L, p).forEach((c) => {
+      occ[c.join(",")] = 1;
+    });
+    if (cells.some((c) => occ[c.join(",")])) return { ok: false, cells, text: `\u548C ${p.pid.toUpperCase()} \u865F\u65B9\u584A\u91CD\u758A` };
+  }
+  return { ok: true, cells, text: "\u4F4D\u7F6E\u6C92\u554F\u984C,\u53EF\u4EE5\u653E\u4E0B" };
+}
+const objKey = (L, o, M) => C.key(C.orient(C.cellsOf(L, o.shape), M));
+function matchPct(L, o, M) {
+  const a = C.orient(C.cellsOf(L, o.shape), M), b = C.orient(C.cellsOf(L, o.shape), o.targetM), set = {};
+  b.forEach((c) => {
+    set[c.join(",")] = 1;
+  });
+  return Math.round(100 * a.filter((c) => set[c.join(",")]).length / a.length);
+}
+const fmtT = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+const COACH = {
+  P1: [
+    { text: "\u6B61\u8FCE\u4F86\u5230 3D \u7A7A\u9593!\u53F3\u4E0B\u89D2\u7684\u5C0F\u7F85\u76E4:\u7D05 X \u5F80\u53F3\u3001\u7DA0 Y \u5F80\u4E0A\u3001\u85CD Z \u5F80\u524D\u3002\u7528\u624B\u6307\u6216\u6ED1\u9F20\u62D6\u66F3\u756B\u9762\u53EF\u4EE5\u63DB\u89D2\u5EA6\u3002", manual: true },
+    { text: "\u9EDE\u9078\u4E0B\u65B9\u6258\u76E4\u88E1\u7684\u300CA \u65B9\u7247\u300D\u3002", hl: ["tray-a"], done: (g) => g.held && g.held.pid === "a" },
+    { text: "\u76D2\u5B50\u53EA\u6709 1 \u683C\u539A,\u65B9\u7247\u662F\u5E73\u7684\u3002\u6309 X \u8EF8\u7684\u300C\u27F2\uFF0B\u300D\u628A\u5B83\u7ACB\u8D77\u4F86\u3002", hl: ["rot-x+"], done: (g) => g.held && C.size(C.orient(C.cellsOf(g.lv.cfg, "O4"), g.held.M))[2] === 1 },
+    { text: "\u8A66\u8A66\u6309 Y \u8EF8\u7684\u79FB\u52D5\u300C\u25B2\u300D,\u65B9\u584A\u6703\u56E0\u70BA\u8D85\u51FA\u76D2\u5B50\u8B8A\u7D05;\u518D\u6309\u300C\u25BC\u300D\u56DE\u4F86\u3002", hl: ["mv-y+", "mv-y-"], done: (g) => g.flags.movedY > 0 && g.flags.lastOk },
+    { text: "\u7DA0\u8272\u4EE3\u8868\u4F4D\u7F6E\u6B63\u78BA\u3002\u6309\u300C\u653E\u4E0B\u300D!", hl: ["place"], done: (g) => g.placed.length >= 1 },
+    { text: "\u7B2C\u4E8C\u584A:\u9078\u300CB \u96D9\u584A\u300D,\u7528 Z \u8EF8\u300C\u27F2\uFF0B\u300D\u8B93\u5B83\u7AD9\u8D77\u4F86,\u518D\u7528 X \u8EF8\u300C\u25B6\u300D\u79FB\u5230\u6700\u53F3\u908A\u4E00\u6B04,\u653E\u4E0B\u3002", hl: ["tray-b", "rot-z+", "mv-x+", "place"], done: (g) => g.status === "won" }
+  ],
+  R1: [
+    { text: "\u5DE6\u908A\u662F\u300C\u4F60\u7684\u300D\u65B9\u584A,\u53F3\u908A\u662F\u300C\u76EE\u6A19\u300D\u3002\u9019\u4E00\u95DC\u53EA\u80FD\u7E5E Y \u8EF8(\u7DA0\u8272)\u8F49\u3002", manual: true },
+    { text: "\u6309 Y \u8EF8\u7684\u300C\u27F2\uFF0B\u300D,\u770B\u300C\u5C0D\u9F4A\u5EA6\u300D\u8B8A\u6210 100%\u3002", hl: ["rot-y+", "rot-y-"], done: (g) => g.status === "won" }
+  ]
+};
+function advanceCoach(g) {
+  const list = COACH[g.lv.id];
+  while (g.coach >= 0 && list && list[g.coach] && !list[g.coach].manual && list[g.coach].done && list[g.coach].done(g)) g = { ...g, coach: g.coach + 1 };
+  if (!list || g.coach >= list.length) g = { ...g, coach: -1 };
+  return g;
+}
+function newGame(lv, prog) {
+  const cfg = lv.cfg;
+  return {
+    gid: Math.random().toString(36).slice(2),
+    lv,
+    status: "play",
+    elapsed: 0,
+    steps: 0,
+    hints: 0,
+    log: [],
+    by: {},
+    tags: {},
+    msg: "",
+    ev: { k: "", n: 0 },
+    placed: [],
+    held: null,
+    maxY: lv.mode === "pack" ? cfg.box[1] - 1 : null,
+    hintCells: null,
+    hintPid: null,
+    hintText: "",
+    hintAt: 0,
+    objs: lv.mode === "rot" ? cfg.objects.map((o) => ({ id: o.id, M: C.I, t0: 0 })) : [],
+    sel: 0,
+    flash: null,
+    lastRot: null,
+    coach: lv.tutorial && COACH[lv.id] ? 0 : -1,
+    flags: { movedY: 0, lastOk: false },
+    result: null,
+    feas: null
+  };
+}
+const who = (g, team) => team.op >= 0 && team.members[team.op] || "\u5927\u5BB6";
+function logEv(g, team, k, x) {
+  const w = who(g, team), by = { ...g.by };
+  if (k === "act") by[w] = (by[w] || 0) + 1;
+  return { ...g, by, log: g.log.concat([{ t: g.elapsed, w, k, x }]).slice(-250) };
+}
+function bump(g, k) {
+  return { ...g, ev: { k, n: g.ev.n + 1 } };
+}
+function finish(g, won, why, team) {
+  if (!won) return bump({ ...g, status: "lost", msg: why }, "bad");
+  const lv = g.lv, par = lv.par;
+  let stars = 1;
+  if (lv.mode === "pack") {
+    if (g.hints === 0) stars++;
+    if (g.steps <= par + 2) stars++;
+  } else {
+    if (g.steps <= par + 2) stars++;
+    if (g.steps <= par && g.hints === 0) stars++;
+  }
+  const active = Object.keys(g.by).filter((k) => k !== "\u5927\u5BB6").length, tagN = Object.values(g.tags).reduce((a, b) => a + b, 0);
+  const points = Math.max(0, 10 + 5 * stars + 2 * Math.min(5, active) + Math.min(5, tagN) - HINT_COST * g.hints);
+  return bump({ ...g, status: "won", result: { stars, points, active, tagN }, msg: "\u5B8C\u6210!" }, "win");
+}
+function checkLimits(g) {
+  if (g.status !== "play") return g;
+  if (g.lv.stepLimit && g.steps > g.lv.stepLimit) return finish(g, false, "\u6B65\u6578\u7528\u5B8C\u4E86");
+  return g;
+}
+function doRot(g, team, axis, dir) {
+  const o = g.objs[g.sel], cfgO = g.lv.cfg.objects[g.sel];
+  if (!g.lv.cfg.axes.includes(axis)) return { ...g, msg: `\u9019\u4E00\u95DC\u4E0D\u80FD\u7E5E ${axis.toUpperCase()} \u8EF8\u8F49`, ev: { k: "bad", n: g.ev.n + 1 } };
+  const objs = g.objs.map((x, i) => i === g.sel ? { ...x, M: C.rotM(x.M, axis, dir), t0: Date.now() } : x);
+  let n = { ...g, objs, steps: g.steps + 1, flash: { axis, t: Date.now() }, lastRot: { i: g.sel, axis, dir, t0: Date.now() } };
+  n = logEv(n, team, "act", `\u7E5E ${axis.toUpperCase()} \u8EF8 ${dir > 0 ? "\uFF0B" : "\u2212"}`);
+  n = bump(n, "move");
+  if (n.objs.every((x, i) => objKey(n.lv.cfg, n.lv.cfg.objects[i], x.M) === objKey(n.lv.cfg, n.lv.cfg.objects[i], n.lv.cfg.objects[i].targetM))) return finish(n, true, "", team);
+  const cur = n.objs[n.sel];
+  if (objKey(n.lv.cfg, cfgO, cur.M) === objKey(n.lv.cfg, cfgO, cfgO.targetM)) {
+    const nx = n.objs.findIndex((x, i) => objKey(n.lv.cfg, n.lv.cfg.objects[i], x.M) !== objKey(n.lv.cfg, n.lv.cfg.objects[i], n.lv.cfg.objects[i].targetM));
+    if (nx >= 0) n = { ...n, sel: nx, msg: `${cfgO.id.replace("o", "\u7269\u4EF6 ")} \u5C0D\u6E96\u4E86!\u63DB\u4E0B\u4E00\u500B` };
+  }
+  return checkLimits(n);
+}
+function doPlace(g, team, autoRotate) {
+  const L = g.lv.cfg, h = g.held;
+  if (!h) return g;
+  const v = validate(L, g.placed, h);
+  if (!v.ok) return bump({ ...g, msg: v.text }, "bad");
+  const p = { pid: h.pid, shape: pieceOf(L, h.pid).shape, M: h.M, pos: h.pos, t0: Date.now() };
+  let n = { ...g, placed: g.placed.concat([p]), held: null, steps: g.steps + 1, hintCells: null, hintPid: null, hintText: "" };
+  n = logEv(n, team, "act", `\u653E\u4E0B ${pname(L, h.pid)}`);
+  n = bump(n, "place");
+  const total = C.boxCells(L).length, filled = n.placed.reduce((a, q) => a + C.placementCells(L, q).length, 0);
+  if (filled === total && C.checkRules(L, n.placed).every((r) => r.ok)) return finish(n, true, "", team);
+  if (filled === total) n.msg = "\u76D2\u5B50\u6EFF\u4E86,\u4F46\u9084\u6709\u898F\u5247\u6C92\u9054\u6210,\u53D6\u56DE\u5E7E\u584A\u91CD\u65B0\u60F3\u60F3";
+  else if (g.lv.world > 0 && g.lv.world <= 2) {
+    const s = C.solve(L, n.placed, 1);
+    n.feas = s.length > 0;
+    n.msg = s.length ? "\u5230\u76EE\u524D\u70BA\u6B62\u90FD\u5C0D,\u7E7C\u7E8C!" : "\u9019\u6A23\u64FA\u4E4B\u5F8C\u6703\u7121\u89E3,\u8A66\u8457\u53D6\u56DE\u67D0\u4E00\u584A";
+  } else n.msg = `\u5DF2\u586B ${filled}/${total} \u683C`;
+  return checkLimits(n);
+}
+function nextHint(g, team) {
+  if (g.hints >= MAXHINT) return { ...g, msg: "\u9019\u95DC\u7684\u63D0\u793A\u7528\u5B8C\u4E86" };
+  const tier = g.hints + 1, L = g.lv.cfg;
+  let n = { ...g, hints: tier };
+  n = logEv(n, team, "hint", `\u4F7F\u7528\u63D0\u793A ${tier}`);
+  n = bump(n, "hint");
+  if (g.lv.mode === "pack") {
+    const sol = C.solve(L, g.placed, 1)[0];
+    if (!sol) return { ...n, hintText: "\u76EE\u524D\u7684\u64FA\u6CD5\u548C\u4EFB\u4F55\u89E3\u6CD5\u90FD\u885D\u7A81\u4E86\u3002\u8A66\u8457\u53D6\u56DE\u6700\u8FD1\u653E\u4E0B\u7684\u4E00\u584A\u3002", hintCells: null };
+    const todo = sol.filter((p) => !g.placed.some((q) => q.pid === p.pid));
+    if (!todo.length) return { ...n, hintText: "\u5168\u90E8\u90FD\u5230\u4F4D\u4E86!" };
+    todo.sort((a, b) => {
+      const ca = C.placementCells(L, a)[0], cb = C.placementCells(L, b)[0];
+      return ca[1] - cb[1] || ca[2] - cb[2] || ca[0] - cb[0];
+    });
+    const t = todo[0], cs = C.placementCells(L, t), ys = cs.map((c) => c[1]);
+    if (tier === 1) return { ...n, hintPid: t.pid, hintCells: null, hintText: `\u4E0B\u4E00\u584A\u5EFA\u8B70\u7528\u300C${pname(L, t.pid)}\u300D,\u5B83\u6703\u7528\u5230\u7B2C ${Math.min(...ys)} \u5C64\u3002\u60F3\u60F3\u54EA\u4E00\u9762\u8A72\u671D\u4E0B\u3002` };
+    if (tier === 2) return { ...n, hintPid: t.pid, hintCells: cs, hintText: `\u865B\u7DDA\u6846\u5C31\u662F\u300C${pname(L, t.pid)}\u300D\u8A72\u653E\u7684\u4F4D\u7F6E,\u5C0D\u7167\u4E09\u8EF8\u5EA7\u6A19\u627E\u51FA\u8F49\u6CD5\u3002` };
+    const placed = { pid: t.pid, shape: t.shape, M: t.M, pos: t.pos, t0: Date.now() };
+    let m = { ...n, placed: g.placed.concat([placed]), held: null, steps: g.steps + 1, hintCells: null, hintPid: null, hintText: `\u5DF2\u5E6B\u4F60\u653E\u597D\u300C${pname(L, t.pid)}\u300D` };
+    const total = C.boxCells(L).length, filled = m.placed.reduce((a, q) => a + C.placementCells(L, q).length, 0);
+    if (filled === total && C.checkRules(L, m.placed).every((r2) => r2.ok)) return finish(m, true, "", team);
+    return checkLimits(m);
+  }
+  let i = g.sel;
+  const un = (j) => objKey(L, L.objects[j], g.objs[j].M) !== objKey(L, L.objects[j], L.objects[j].targetM);
+  if (!un(i)) i = g.objs.findIndex((x, j) => un(j));
+  if (i < 0) return n;
+  const o = L.objects[i], r = C.minSteps(C.cellsOf(L, o.shape), g.objs[i].M, objKey(L, o, o.targetM), L.axes);
+  if (!r || !r.path.length) return n;
+  const st = r.path[0];
+  if (tier === 1) return { ...n, sel: i, hintText: `\u5148\u8A66\u8A66\u7E5E ${st.axis.toUpperCase()} \u8EF8\u8F49\u3002\u9084\u8981 ${r.steps} \u6B65\u5C31\u80FD\u5C0D\u6E96\u3002` };
+  if (tier === 2) return { ...n, sel: i, hintText: `\u6309 ${st.axis.toUpperCase()} \u8EF8\u7684\u300C${st.dir > 0 ? "\u27F2\uFF0B" : "\u27F3\u2212"}\u300D,\u63A5\u8457\u518D\u770B\u5C0D\u9F4A\u5EA6\u3002` };
+  return doRot({ ...n, sel: i, hintText: `\u5DF2\u5E6B\u4F60\u8F49\u4E86\u4E00\u6B65(${st.axis.toUpperCase()} ${st.dir > 0 ? "\uFF0B" : "\u2212"})` }, team, st.axis, st.dir);
+}
+function gameReducer(g, a, team) {
+  let n = g;
+  switch (a.type) {
+    case "TICK": {
+      n = { ...g, elapsed: g.elapsed + 1 };
+      if (g.lv.timeLimit && n.elapsed >= g.lv.timeLimit) return finish(n, false, "\u6642\u9593\u5230\u4E86");
+      return n;
+    }
+    case "SELECT_PIECE": {
+      const L = g.lv.cfg, pid = a.pid;
+      const pl = g.placed.find((p) => p.pid === pid);
+      if (pl) {
+        n = { ...g, placed: g.placed.filter((p) => p.pid !== pid), held: { pid, M: pl.M, pos: pl.pos, anim: null }, steps: g.steps + 1, msg: `\u53D6\u56DE ${pname(L, pid)},\u53EF\u4EE5\u91CD\u65B0\u64FA` };
+        n = logEv(n, team, "act", `\u53D6\u56DE ${pname(L, pid)}`);
+        n = bump(n, "move");
+        return checkLimits(n);
+      }
+      if (g.held && g.held.pid === pid) return { ...g, held: null, msg: "\u653E\u56DE\u6258\u76E4" };
+      const h = { pid, M: C.I, pos: [0, 0, 0], anim: null };
+      h.pos = clampPos(L, h);
+      n = { ...g, held: h, msg: "" };
+      break;
+    }
+    case "DROP":
+      n = { ...g, held: null };
+      break;
+    case "MOVE": {
+      if (!g.held) return { ...g, msg: "\u5148\u5F9E\u6258\u76E4\u9078\u4E00\u584A" };
+      const L = g.lv.cfg, i = AXI[a.axis], pos = g.held.pos.slice();
+      pos[i] += a.dir;
+      const d = [0, 0, 0];
+      d[i] = -a.dir;
+      n = { ...g, held: { ...g.held, pos, anim: { t0: Date.now(), dur: 140, off: d } } };
+      n = logEv(n, team, "act", `\u79FB\u52D5 ${a.axis.toUpperCase()}${a.dir > 0 ? "\uFF0B" : "\u2212"}`);
+      if (a.axis === "y") n = { ...n, flags: { ...n.flags, movedY: n.flags.movedY + 1 } };
+      n = bump(n, "move");
+      break;
+    }
+    case "ROT": {
+      if (g.lv.mode === "rot") return doRot(g, team, a.axis, a.dir);
+      if (!g.held) return { ...g, msg: "\u5148\u5F9E\u6258\u76E4\u9078\u4E00\u584A" };
+      const L = g.lv.cfg, h = { ...g.held, M: C.rotM(g.held.M, a.axis, a.dir) };
+      h.pos = clampPos(L, h);
+      h.anim = { t0: Date.now(), dur: 260, rot: { axis: a.axis, dir: a.dir } };
+      n = { ...g, held: h, flash: { axis: a.axis, t: Date.now() } };
+      n = logEv(n, team, "act", `\u65CB\u8F49 ${a.axis.toUpperCase()}${a.dir > 0 ? "\uFF0B" : "\u2212"}`);
+      n = bump(n, "move");
+      break;
+    }
+    case "PLACE":
+      n = doPlace(g, team);
+      break;
+    case "SELECT_OBJ":
+      n = { ...g, sel: a.i };
+      break;
+    case "SLICE":
+      n = { ...g, maxY: a.y };
+      break;
+    case "HINT":
+      n = nextHint(g, team);
+      break;
+    case "TAG": {
+      n = { ...g, tags: { ...g.tags, [a.text]: (g.tags[a.text] || 0) + 1 } };
+      n = logEv(n, team, "tag", a.text);
+      break;
+    }
+    case "COACH_NEXT":
+      n = { ...g, coach: g.coach + 1 };
+      break;
+    case "COACH_OFF":
+      n = { ...g, coach: -1 };
+      break;
+    case "COACH_ON":
+      n = { ...g, coach: 0 };
+      break;
+    default:
+      return g;
+  }
+  if (n.lv.mode === "pack" && n.held) n = { ...n, flags: { ...n.flags, lastOk: validate(n.lv.cfg, n.placed, n.held).ok } };
+  return advanceCoach(n);
+}
+function reducer(s, a) {
+  switch (a.type) {
+    case "TEAM":
+      return { ...s, team: { ...s.team, ...a.v } };
+    case "GO":
+      return { ...s, screen: a.screen };
+    case "PROG":
+      return { ...s, prog: { ...s.prog, ...a.v } };
+    case "START":
+      return { ...s, screen: "play", game: newGame(a.lv, s.prog), note: "" };
+    case "NOTE":
+      return { ...s, note: a.v };
+    case "SAVE_NOTE":
+      return { ...s, noteSaved: true, prog: { ...s.prog, notes: [{ d: LV.taipeiDate(), lv: s.game.lv.name, q: a.v }].concat(s.prog.notes).slice(0, 20) } };
+    default: {
+      if (!s.game || s.game.status !== "play" && a.type !== "NOOP") return s;
+      let team = s.team;
+      const g = gameReducer(s.game, a, team);
+      if (a.type === "PLACE" && team.auto && team.members.length > 1 && g.placed.length > s.game.placed.length) team = { ...team, op: (team.op + 1) % team.members.length };
+      let prog = s.prog;
+      if (s.game.status === "play" && g.status === "won") {
+        const lv = g.lv, r = g.result, stars = Object.assign({}, prog.stars);
+        stars[lv.id] = Math.max(stars[lv.id] || 0, r.stars);
+        const daily = Object.assign({}, prog.daily);
+        if (lv.dynamic === "daily") {
+          const d = LV.taipeiDate();
+          daily[d] = Object.assign({}, daily[d], { [lv.mode]: Math.max((daily[d] || {})[lv.mode] || 0, r.stars) });
+        }
+        const tut = Object.assign({}, prog.tut);
+        if (lv.tutorial) tut[lv.id] = 1;
+        prog = { ...prog, stars, daily, tut, points: prog.points + r.points };
+      }
+      return { ...s, game: g, prog, team, noteSaved: false };
+    }
+  }
+}
+function View3D({ scenes, apiRef, onPick, spin }) {
+  const cv = useRef(null), S = useRef({ cam: R.mkCam(), prims: [], raf: 0, ptr: /* @__PURE__ */ new Map(), scenes, tween: null, spin, drag: null });
+  S.current.scenes = scenes;
+  S.current.spin = spin;
+  S.current.onPick = onPick;
+  const request = useCallback(() => {
+    const st = S.current;
+    if (st.raf) return;
+    st.raf = requestAnimationFrame(() => {
+      st.raf = 0;
+      const c = cv.current;
+      if (!c) return;
+      const w = c.clientWidth, h = c.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) {
+        c.width = Math.round(w * dpr);
+        c.height = Math.round(h * dpr);
+      }
+      const ctx = c.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      let again = false;
+      if (st.tween) {
+        const t = Math.min(1, (Date.now() - st.tween.t0) / 320), e = R.easeOut(t);
+        st.cam.az = st.tween.az0 + (st.tween.az1 - st.tween.az0) * e;
+        st.cam.el = st.tween.el0 + (st.tween.el1 - st.tween.el0) * e;
+        if (t >= 1) st.tween = null;
+        else again = true;
+      }
+      if (st.spin) {
+        st.cam.az += 6e-3;
+        again = true;
+      }
+      const sc = st.scenes, n = sc.length, wide = w >= h * 1.15;
+      st.prims = [];
+      sc.forEach((s, i) => {
+        const rect = n === 1 ? { x: 0, y: 0, w, h } : wide ? { x: i * w / n, y: 0, w: w / n, h } : { x: 0, y: i * h / n, w, h: h / n };
+        const r = R.draw(ctx, rect, s, st.cam, Date.now());
+        if (r.animating) again = true;
+        st.prims.push({ rect, prims: r.prims });
+        if (i > 0) {
+          ctx.strokeStyle = R.pal().line;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          if (wide) {
+            ctx.moveTo(rect.x, 0);
+            ctx.lineTo(rect.x, h);
+          } else {
+            ctx.moveTo(0, rect.y);
+            ctx.lineTo(w, rect.y);
+          }
+          ctx.stroke();
+        }
+      });
+      if (again) request();
+    });
+  }, []);
+  useEffect(() => {
+    request();
+  });
+  useEffect(() => {
+    const c = cv.current, st = S.current;
+    apiRef.current = {
+      preset(name) {
+        const p = R.PRESETS[name];
+        let a1 = p.az;
+        const d = a1 - st.cam.az;
+        a1 = st.cam.az + Math.atan2(Math.sin(d), Math.cos(d));
+        st.tween = { t0: Date.now(), az0: st.cam.az, az1: a1, el0: st.cam.el, el1: p.el };
+        request();
+      },
+      zoom(f) {
+        st.cam.k = Math.max(0.45, Math.min(2, st.cam.k * f));
+        request();
+      }
+    };
+    const ro = new ResizeObserver(() => request());
+    ro.observe(c);
+    const mq = window.matchMedia("(prefers-color-scheme: dark)"), onTheme = () => {
+      request();
+    };
+    mq.addEventListener && mq.addEventListener("change", onTheme);
+    const down = (e) => {
+      c.setPointerCapture(e.pointerId);
+      st.ptr.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (st.ptr.size === 1) st.drag = { x0: e.clientX, y0: e.clientY, moved: false, t0: Date.now() };
+      else if (st.drag) st.drag.moved = true;
+    };
+    const move = (e) => {
+      const p = st.ptr.get(e.pointerId);
+      if (!p) return;
+      if (st.ptr.size === 2) {
+        const o = [...st.ptr.entries()].find(([id]) => id !== e.pointerId)[1], d0 = Math.hypot(p.x - o.x, p.y - o.y), d1 = Math.hypot(e.clientX - o.x, e.clientY - o.y);
+        if (d0 > 0) {
+          st.cam.k = Math.max(0.45, Math.min(2, st.cam.k * d0 / d1));
+        }
+      } else if (st.drag) {
+        const dx = e.clientX - p.x, dy = e.clientY - p.y;
+        if (!st.drag.moved && Math.hypot(e.clientX - st.drag.x0, e.clientY - st.drag.y0) > 6) st.drag.moved = true;
+        if (st.drag.moved) {
+          st.cam.az -= dx * 8e-3;
+          st.cam.el = Math.max(0.05, Math.min(1.45, st.cam.el + dy * 8e-3));
+        }
+      }
+      p.x = e.clientX;
+      p.y = e.clientY;
+      request();
+    };
+    const up = (e) => {
+      const had = st.ptr.size === 1 && st.drag;
+      st.ptr.delete(e.pointerId);
+      if (had && !st.drag.moved && Date.now() - st.drag.t0 < 600) {
+        const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+        const hitEntry = st.prims.find((q) => x >= q.rect.x && x <= q.rect.x + q.rect.w && y >= q.rect.y && y <= q.rect.y + q.rect.h);
+        const tag = hitEntry && R.hit(hitEntry.prims, x, y);
+        if (tag && st.onPick) st.onPick(tag);
+      }
+      if (!st.ptr.size) st.drag = null;
+    };
+    const wheel = (e) => {
+      e.preventDefault();
+      st.cam.k = Math.max(0.45, Math.min(2, st.cam.k * Math.exp(e.deltaY * 1e-3)));
+      request();
+    };
+    c.addEventListener("pointerdown", down);
+    c.addEventListener("pointermove", move);
+    c.addEventListener("pointerup", up);
+    c.addEventListener("pointercancel", up);
+    c.addEventListener("wheel", wheel, { passive: false });
+    return () => {
+      ro.disconnect();
+      c.removeEventListener("pointerdown", down);
+      c.removeEventListener("pointermove", move);
+      c.removeEventListener("pointerup", up);
+      c.removeEventListener("pointercancel", up);
+      c.removeEventListener("wheel", wheel);
+      cancelAnimationFrame(st.raf);
+      mq.removeEventListener && mq.removeEventListener("change", onTheme);
+    };
+  }, []);
+  return /* @__PURE__ */ React.createElement("canvas", { ref: cv, "aria-label": "3D \u756B\u9762,\u53EF\u62D6\u66F3\u65CB\u8F49\u8996\u89D2,\u96D9\u6307\u6216\u6EFE\u8F2A\u7E2E\u653E", role: "img", "data-testid": "stage" });
+}
+function packScene(g, ui) {
+  const L = g.lv.cfg, b = L.box, solids = [];
+  if (L.holes.length) solids.push({ cells: L.holes, color: "hole", alpha: 0.92 });
+  g.placed.forEach((p) => solids.push({ cells: C.placementCells(L, p), color: colorOf(L, p.pid), tag: { t: "piece", pid: p.pid }, anim: { t0: p.t0, dur: 380, off: [0, 1.4, 0] }, glow: g.status === "won" ? 0.25 : 0 }));
+  if (g.hintCells) solids.push({ cells: g.hintCells, color: colorOf(L, g.hintPid), outline: true });
+  if (g.held) {
+    const v = validate(L, g.placed, g.held);
+    solids.push({ cells: v.cells, ghost: true, ok: v.ok, color: colorOf(L, g.held.pid), anim: g.held.anim });
+  }
+  return {
+    radius: Math.sqrt(b[0] * b[0] + b[1] * b[1] + b[2] * b[2]) / 2 + 0.9,
+    center: [b[0] / 2, b[1] / 2, b[2] / 2],
+    box: { n: b },
+    solids,
+    maxY: g.maxY,
+    labels: true,
+    flash: g.flash,
+    axes3d: { origin: [0, 0, 0], len: { x: b[0] + 0.9, y: b[1] + 0.9, z: b[2] + 0.9 }, neg: 0 },
+    glow: g.status === "won" ? 0.2 : 0
+  };
+}
+function rotScenes(g) {
+  const L = g.lv.cfg, k = L.objects.length;
+  const mkCells = (o, M) => {
+    const oc = C.orient(C.cellsOf(L, o.shape), M), sz = C.size(oc);
+    return { oc, sz };
+  };
+  let maxd = 1;
+  L.objects.forEach((o) => {
+    const sz = C.size(C.cellsOf(L, o.shape));
+    maxd = Math.max(maxd, sz[0], sz[1], sz[2]);
+  });
+  const spacing = maxd + 1.6, off = (i) => (i - (k - 1) / 2) * spacing;
+  const build = (isTarget) => {
+    const solids = [];
+    L.objects.forEach((o, i) => {
+      const M = isTarget ? o.targetM : g.objs[i].M, { oc, sz } = mkCells(o, M);
+      const cells = oc.map((c) => [c[0] - sz[0] / 2 + off(i), c[1] - sz[1] / 2, c[2] - sz[2] / 2]);
+      const matched = objKey(L, o, g.objs[i].M) === objKey(L, o, o.targetM);
+      const lr = !isTarget && g.lastRot && g.lastRot.i === i ? g.lastRot : null;
+      solids.push({ cells, color: "p" + i % 7, tag: isTarget ? null : { t: "obj", i }, hl: !isTarget && k > 1 && g.sel === i, glow: matched ? 0.28 : 0, anim: lr ? { t0: lr.t0, dur: 260, rot: { axis: lr.axis, dir: lr.dir } } : null });
+    });
+    const half = maxd / 2 + 1.1, selOff = off(g.sel);
+    return {
+      radius: k * spacing / 2 + maxd * 0.3 + 0.5,
+      center: [0, 0, 0],
+      solids,
+      pad: Math.ceil(k * spacing / 2 + 1.5),
+      padY: -maxd / 2 - 0.3,
+      flash: g.flash,
+      axes3d: isTarget ? null : { origin: [selOff, 0, 0], len: { x: half, y: half, z: half }, neg: half },
+      title: isTarget ? "\u76EE\u6A19" : "\u4F60\u7684",
+      titleColor: isTarget ? "accent" : "ink"
+    };
+  };
+  const a = build(false), b = build(true);
+  return [a, b];
+}
+function Cube({ size = 34 }) {
+  return /* @__PURE__ */ React.createElement("svg", { className: "cube", viewBox: "0 0 40 40", width: size, height: size, "aria-hidden": "true" }, /* @__PURE__ */ React.createElement("polygon", { points: "20,4 35,12 20,20 5,12", fill: "var(--p1)" }), /* @__PURE__ */ React.createElement("polygon", { points: "5,12 20,20 20,37 5,29", fill: "var(--p0)" }), /* @__PURE__ */ React.createElement("polygon", { points: "35,12 20,20 20,37 35,29", fill: "var(--p3)" }), /* @__PURE__ */ React.createElement("path", { d: "M20 20V37M5 12L20 20L35 12", stroke: "var(--surface)", strokeWidth: "1.5", fill: "none" }));
+}
+const Stars = ({ n, big }) => /* @__PURE__ */ React.createElement("span", { className: big ? "big-stars" : "stars", "aria-label": `${n} \u9846\u661F` }, [0, 1, 2].map((i) => i < n ? "\u2605" : /* @__PURE__ */ React.createElement("i", { key: i }, "\u2605")));
+function Header({ s, d }) {
+  return /* @__PURE__ */ React.createElement("header", { className: "top" }, /* @__PURE__ */ React.createElement("button", { className: "brand", onClick: () => d({ type: "GO", screen: "home" }), "aria-label": "\u56DE\u9996\u9801" }, /* @__PURE__ */ React.createElement(Cube, null), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "\u5FC3\u667A\u62FC\u5716"), /* @__PURE__ */ React.createElement("small", null, "3D \u7A7A\u9593\u5408\u4F5C\u6311\u6230"))), /* @__PURE__ */ React.createElement("div", { className: "chips" }, /* @__PURE__ */ React.createElement("span", { className: "chip", title: "\u5408\u4F5C\u9EDE\u6578" }, "\u5408\u4F5C\u9EDE\u6578 ", /* @__PURE__ */ React.createElement("b", null, s.prog.points)), /* @__PURE__ */ React.createElement("button", { className: "btn sm ghost", onClick: () => d({ type: "PROG", v: { sound: !s.prog.sound } }), "aria-pressed": s.prog.sound }, s.prog.sound ? "\u97F3\u6548:\u958B" : "\u97F3\u6548:\u95DC"), s.screen !== "map" && /* @__PURE__ */ React.createElement("button", { className: "btn sm", onClick: () => d({ type: "GO", screen: "map" }) }, "\u95DC\u5361\u5730\u5716")));
+}
+function Home({ s, d, start }) {
+  const [mode, setMode] = useState("pack"), [diff, setDiff] = useState("medium"), [nm, setNm] = useState("");
+  const day = LV.taipeiDate(), dd = s.prog.daily[day] || {};
+  const addMember = () => {
+    const v = nm.trim();
+    if (!v || s.team.members.length >= 8 || s.team.members.includes(v)) return;
+    d({ type: "TEAM", v: { members: s.team.members.concat([v]), op: s.team.op < 0 ? 0 : s.team.op } });
+    setNm("");
+  };
+  const startDaily = (m) => {
+    const x = LV.daily();
+    start(x[m]);
+  };
+  return /* @__PURE__ */ React.createElement("div", { className: "app-in", style: { display: "flex", flexDirection: "column", gap: 14 } }, /* @__PURE__ */ React.createElement("section", { className: "hero" }, /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h2", null, "\u5728\u4E09\u500B\u8EF8\u88E1,\u4E00\u8D77\u627E\u5230\u7B54\u6848"), /* @__PURE__ */ React.createElement("p", { className: "lead" }, "\u8F49\u52D5\u3001\u79FB\u52D5\u3001\u62FC\u5408\u7ACB\u9AD4\u65B9\u584A\u3002\u5927\u5BB6\u5171\u7528\u540C\u4E00\u500B 3D \u756B\u9762,\u908A\u8A0E\u8AD6\u3001\u908A\u52D5\u624B,\u6BCF\u500B\u4EBA\u90FD\u53EF\u4EE5\u64CD\u4F5C\u3002"), /* @__PURE__ */ React.createElement("div", { className: "axes-legend" }, /* @__PURE__ */ React.createElement("span", { className: "axtag x" }, "X \u5DE6\u53F3"), /* @__PURE__ */ React.createElement("span", { className: "axtag y" }, "Y \u4E0A\u4E0B"), /* @__PURE__ */ React.createElement("span", { className: "axtag z" }, "Z \u524D\u5F8C")), /* @__PURE__ */ React.createElement("div", { className: "row wrap" }, /* @__PURE__ */ React.createElement("button", { className: "btn pri", onClick: () => start(LV.get("P1")) }, "\u65B0\u624B\u6559\u5B78"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => d({ type: "GO", screen: "map" }) }, "\u95D6\u95DC\u5730\u5716"))), /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("h3", null, "\u5718\u968A"), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, "\u540D\u55AE\u53EF\u4E0D\u586B\u3002\u586B\u4E86\u4E4B\u5F8C,\u53EF\u4EE5\u6A19\u8A18\u76EE\u524D\u7531\u8AB0\u64CD\u4F5C,\u56DE\u9867\u6642\u80FD\u770B\u5230\u6BCF\u500B\u4EBA\u7684\u8CA2\u737B\u3002"), /* @__PURE__ */ React.createElement("div", { className: "row", style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement("input", { type: "text", value: s.team.name, onChange: (e) => d({ type: "TEAM", v: { name: e.target.value } }), placeholder: "\u5718\u968A\u540D\u7A31", "aria-label": "\u5718\u968A\u540D\u7A31" })), /* @__PURE__ */ React.createElement("form", { className: "row", style: { marginTop: 8 }, onSubmit: (e) => {
+    e.preventDefault();
+    addMember();
+  } }, /* @__PURE__ */ React.createElement("input", { type: "text", value: nm, onChange: (e) => setNm(e.target.value), placeholder: "\u65B0\u589E\u968A\u54E1(\u6700\u591A 8 \u4EBA)", "aria-label": "\u65B0\u589E\u968A\u54E1" }), /* @__PURE__ */ React.createElement("button", { className: "btn", type: "submit" }, "\u52A0\u5165")), /* @__PURE__ */ React.createElement("div", { className: "members" }, s.team.members.map((m, i) => /* @__PURE__ */ React.createElement("span", { className: "member", key: m }, m, /* @__PURE__ */ React.createElement("button", { "aria-label": `\u79FB\u9664 ${m}`, onClick: () => {
+    const ms = s.team.members.filter((x) => x !== m);
+    d({ type: "TEAM", v: { members: ms, op: ms.length ? Math.min(s.team.op, ms.length - 1) : -1 } });
+  } }, "\xD7")))), s.team.members.length > 1 && /* @__PURE__ */ React.createElement("label", { className: "row small", style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: !!s.team.auto, onChange: (e) => d({ type: "TEAM", v: { auto: e.target.checked } }) }), "\u6BCF\u6B21\u653E\u4E0B\u65B9\u584A\u5F8C,\u81EA\u52D5\u63DB\u4E0B\u4E00\u4F4D\u64CD\u4F5C"))), /* @__PURE__ */ React.createElement("section", { className: "modes", "aria-label": "\u6311\u6230\u6A21\u5F0F" }, /* @__PURE__ */ React.createElement("div", { className: "mode" }, /* @__PURE__ */ React.createElement("h3", null, "\u6BCF\u65E5\u6311\u6230"), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, day, " \xB7 \u5168\u73ED\u540C\u4E00\u984C(\u53F0\u5317\u6642\u9593 0 \u9EDE\u63DB\u984C)"), /* @__PURE__ */ React.createElement("div", { className: "row wrap", style: { marginTop: 6 } }, /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => startDaily("pack") }, "\u62FC\u5408 ", /* @__PURE__ */ React.createElement(Stars, { n: dd.pack || 0 })), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => startDaily("rot") }, "\u65CB\u8F49 ", /* @__PURE__ */ React.createElement(Stars, { n: dd.rot || 0 })))), /* @__PURE__ */ React.createElement("div", { className: "mode" }, /* @__PURE__ */ React.createElement("h3", null, "\u96A8\u6A5F\u95DC\u5361"), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, "\u6BCF\u6B21\u90FD\u662F\u65B0\u984C\u76EE,\u4E00\u5B9A\u6709\u89E3"), /* @__PURE__ */ React.createElement("div", { className: "row wrap", style: { marginTop: 6 } }, /* @__PURE__ */ React.createElement("div", { className: "seg", role: "group", "aria-label": "\u984C\u578B" }, /* @__PURE__ */ React.createElement("button", { className: mode === "pack" ? "on" : "", onClick: () => setMode("pack") }, "\u62FC\u5408"), /* @__PURE__ */ React.createElement("button", { className: mode === "rot" ? "on" : "", onClick: () => setMode("rot") }, "\u65CB\u8F49")), /* @__PURE__ */ React.createElement("div", { className: "seg", role: "group", "aria-label": "\u96E3\u5EA6" }, [["easy", "\u7C21\u55AE"], ["medium", "\u4E2D\u7B49"], ["hard", "\u56F0\u96E3"]].map(([k, t]) => /* @__PURE__ */ React.createElement("button", { key: k, className: diff === k ? "on" : "", onClick: () => setDiff(k) }, t))), /* @__PURE__ */ React.createElement("button", { className: "btn pri", onClick: () => start(LV.random(mode, diff)) }, "\u958B\u59CB"))), /* @__PURE__ */ React.createElement("div", { className: "mode" }, /* @__PURE__ */ React.createElement("h3", null, "\u600E\u9EBC\u73A9"), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, /* @__PURE__ */ React.createElement("b", null, "\u62FC\u5408"), ":\u628A\u6258\u76E4\u7684\u65B9\u584A\u8F49\u5C0D\u65B9\u5411\u3001\u79FB\u5230\u4F4D\u7F6E,\u586B\u6EFF\u76D2\u5B50\u3002", /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("b", null, "\u65CB\u8F49"), ":\u53EA\u7528\u6307\u5B9A\u7684\u8EF8\u8F49\u52D5\u65B9\u584A,\u8B93\u5B83\u548C\u76EE\u6A19\u4E00\u6A23\u3002"))), s.prog.notes.length > 0 && /* @__PURE__ */ React.createElement("section", { className: "card" }, /* @__PURE__ */ React.createElement("h3", null, "\u6700\u8FD1\u7684\u5718\u968A\u89BA\u5BDF"), /* @__PURE__ */ React.createElement("div", { className: "small", style: { marginTop: 6, display: "flex", flexDirection: "column", gap: 4 } }, s.prog.notes.slice(0, 3).map((n, i) => /* @__PURE__ */ React.createElement("p", { key: i }, /* @__PURE__ */ React.createElement("span", { className: "muted" }, n.d, " \xB7 ", n.lv, ":"), " ", n.q)))));
+}
+function MapScreen({ s, d, start }) {
+  const all = LV.all();
+  const unlocked = (i) => s.prog.unlockAll || i === 0 || (s.prog.stars[all[i - 1].id] || 0) >= 1;
+  return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 16 } }, /* @__PURE__ */ React.createElement("div", { className: "between" }, /* @__PURE__ */ React.createElement("h2", null, "\u95DC\u5361\u5730\u5716"), /* @__PURE__ */ React.createElement("label", { className: "row small" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: s.prog.unlockAll, onChange: (e) => d({ type: "PROG", v: { unlockAll: e.target.checked } }) }), "\u8001\u5E2B\u6A21\u5F0F:\u89E3\u9396\u5168\u90E8\u95DC\u5361")), LV.WORLDS.map((w) => /* @__PURE__ */ React.createElement("section", { className: "world", key: w.id }, /* @__PURE__ */ React.createElement("h3", null, "\u4E16\u754C ", w.id, " \xB7 ", w.name, /* @__PURE__ */ React.createElement("span", null, w.desc)), /* @__PURE__ */ React.createElement("div", { className: "levels" }, all.map((l, i) => l.world === w.id && /* @__PURE__ */ React.createElement("button", { key: l.id, className: "lv", disabled: !unlocked(i), onClick: () => start(l), "aria-label": `${l.name}${unlocked(i) ? "" : "(\u5C1A\u672A\u89E3\u9396)"}` }, /* @__PURE__ */ React.createElement("span", { className: "id" }, l.mode === "pack" ? "\u62FC\u5408" : "\u65CB\u8F49", " \xB7 ", l.id), /* @__PURE__ */ React.createElement("span", { className: "nm" }, l.name), /* @__PURE__ */ React.createElement("span", { className: "bl" }, l.blurb), /* @__PURE__ */ React.createElement("span", { className: "row", style: { marginTop: "auto", justifyContent: "space-between" } }, /* @__PURE__ */ React.createElement(Stars, { n: s.prog.stars[l.id] || 0 }), /* @__PURE__ */ React.createElement("span", { className: "tags" }, l.timeLimit > 0 && /* @__PURE__ */ React.createElement("span", { className: "tag" }, "\u9650\u6642 ", l.timeLimit, "s"), l.stepLimit > 0 && /* @__PURE__ */ React.createElement("span", { className: "tag" }, "\u9650 ", l.stepLimit, " \u6B65"), !unlocked(i) && /* @__PURE__ */ React.createElement("span", { className: "tag" }, "\u672A\u89E3\u9396")))))))));
+}
+function Controls({ g, d, hl }) {
+  const isRot = g.lv.mode === "rot", allowed = isRot ? g.lv.cfg.axes : AXES, can = !isRot ? !!g.held : true;
+  const mvLab = { x: ["\u25C0", "\u25B6", "\u5DE6", "\u53F3"], y: ["\u25BC", "\u25B2", "\u4E0B", "\u4E0A"], z: ["\u5F8C", "\u524D", "\u5F80\u5F8C", "\u5F80\u524D"] };
+  return /* @__PURE__ */ React.createElement("div", { className: "ctl", role: "group", "aria-label": "\u4E09\u8EF8\u63A7\u5236" }, AXES.map((a) => {
+    const lock = !allowed.includes(a), c = { x: "var(--ax)", y: "var(--ay)", z: "var(--az)" }[a], cls = (k) => hl.has(k) ? " hl" : "";
+    return /* @__PURE__ */ React.createElement("div", { key: a, className: "axcol" + (lock ? " locked" : ""), style: { "--axc": c } }, /* @__PURE__ */ React.createElement("div", { className: "axh" }, a.toUpperCase(), /* @__PURE__ */ React.createElement("small", null, { x: "\u5DE6\u53F3", y: "\u4E0A\u4E0B", z: "\u524D\u5F8C" }[a], lock ? " \u{1F512}" : "")), !isRot && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "pair" }, /* @__PURE__ */ React.createElement("button", { className: "abtn" + cls(`mv-${a}-`), disabled: !can, onClick: () => d({ type: "MOVE", axis: a, dir: -1 }), "aria-label": `${a.toUpperCase()} \u8EF8\u5F80${mvLab[a][2]}\u79FB` }, mvLab[a][0]), /* @__PURE__ */ React.createElement("button", { className: "abtn" + cls(`mv-${a}+`), disabled: !can, onClick: () => d({ type: "MOVE", axis: a, dir: 1 }), "aria-label": `${a.toUpperCase()} \u8EF8\u5F80${mvLab[a][3]}\u79FB` }, mvLab[a][1])), /* @__PURE__ */ React.createElement("div", { className: "cap" }, "\u79FB\u52D5")), /* @__PURE__ */ React.createElement("div", { className: "pair" }, /* @__PURE__ */ React.createElement("button", { className: "abtn rot" + cls(`rot-${a}-`), disabled: !can || lock, onClick: () => d({ type: "ROT", axis: a, dir: -1 }), "aria-label": `\u7E5E ${a.toUpperCase()} \u8EF8\u8CA0\u5411\u8F49 90 \u5EA6` }, "\u27F3\u2212"), /* @__PURE__ */ React.createElement("button", { className: "abtn rot" + cls(`rot-${a}+`), disabled: !can || lock, onClick: () => d({ type: "ROT", axis: a, dir: 1 }), "aria-label": `\u7E5E ${a.toUpperCase()} \u8EF8\u6B63\u5411\u8F49 90 \u5EA6` }, "\u27F2\uFF0B")), /* @__PURE__ */ React.createElement("div", { className: "cap" }, "\u65CB\u8F49 90\xB0"));
+  }));
+}
+function Thumb({ L, pid, tick }) {
+  const r = useRef(null);
+  useEffect(() => {
+    R.thumb(r.current, C.cellsOf(L, pieceOf(L, pid).shape), colorOf(L, pid), 56);
+  }, [L, pid, tick]);
+  return /* @__PURE__ */ React.createElement("canvas", { ref: r, "aria-hidden": "true" });
+}
+function Play({ s, d }) {
+  const g = s.game, lv = g.lv, L = lv.cfg, isPack = lv.mode === "pack", api = useRef(null);
+  const [tick, setTick] = useState(0), [showHelp, setShowHelp] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)"), f = () => setTick((t) => t + 1);
+    mq.addEventListener && mq.addEventListener("change", f);
+    return () => mq.removeEventListener && mq.removeEventListener("change", f);
+  }, []);
+  useEffect(() => {
+    if (g.status !== "play") return;
+    const id = setInterval(() => d({ type: "TICK" }), 1e3);
+    return () => clearInterval(id);
+  }, [g.status, g.lv.id]);
+  useEffect(() => {
+    if (!g.ev.n) return;
+    if (s.prog.sound) sfx(g.ev.k);
+    if (g.ev.k === "place" || g.ev.k === "win") {
+      try {
+        navigator.vibrate && navigator.vibrate(g.ev.k === "win" ? [30, 40, 60] : 18);
+      } catch (e) {
+      }
+    }
+  }, [g.ev.n]);
+  useEffect(() => {
+    const f = (e) => {
+      if (/INPUT|TEXTAREA/.test(document.activeElement && document.activeElement.tagName)) return;
+      const k = e.key, mv = (axis, dir) => {
+        e.preventDefault();
+        d({ type: "MOVE", axis, dir });
+      };
+      if (isPack) {
+        if (k === "ArrowLeft") mv("x", -1);
+        else if (k === "ArrowRight") mv("x", 1);
+        else if (k === "ArrowUp") mv("z", -1);
+        else if (k === "ArrowDown") mv("z", 1);
+        else if (k === "PageUp" || k === "r") mv("y", 1);
+        else if (k === "PageDown" || k === "f") mv("y", -1);
+        else if (k === "Enter") {
+          e.preventDefault();
+          d({ type: "PLACE" });
+        } else if (k === "Escape") d({ type: "DROP" });
+      }
+      if ("xyz".includes(k.toLowerCase()) && k.length === 1) d({ type: "ROT", axis: k.toLowerCase(), dir: k === k.toLowerCase() ? 1 : -1 });
+    };
+    window.addEventListener("keydown", f);
+    return () => window.removeEventListener("keydown", f);
+  }, [isPack]);
+  const scenes = useMemo(() => isPack ? [packScene(g)] : rotScenes(g), [g.placed, g.held, g.maxY, g.hintCells, g.objs, g.sel, g.flash, g.status, g.lastRot]);
+  const onPick = useCallback((tag) => {
+    if (tag.t === "piece") d({ type: "SELECT_PIECE", pid: tag.pid });
+    else if (tag.t === "obj") d({ type: "SELECT_OBJ", i: tag.i });
+  }, []);
+  const coachList = COACH[lv.id], cs = g.coach >= 0 && coachList ? coachList[g.coach] : null, hl = new Set(cs && cs.hl || []);
+  const v = isPack && g.held ? validate(L, g.placed, g.held) : null;
+  const rules = isPack ? C.checkRules(L, g.placed) : [];
+  const left = lv.timeLimit ? Math.max(0, lv.timeLimit - g.elapsed) : null;
+  const filled = isPack ? g.placed.reduce((a, q) => a + C.placementCells(L, q).length, 0) : 0, total = isPack ? C.boxCells(L).length : 0;
+  const statusCls = g.status === "won" ? "ok" : v ? v.ok ? "ok" : "no" : "";
+  let statusText = g.msg;
+  if (v) statusText = v.text;
+  else if (!g.msg) statusText = isPack ? "\u5F9E\u4E0B\u65B9\u6258\u76E4\u9078\u4E00\u584A\u958B\u59CB,\u770B\u5B83\u662F\u4E0D\u662F\u6B63\u5C0D\u8457\u7A7A\u4F4D" : "\u9078\u64C7\u65B9\u584A,\u6309\u4E09\u8EF8\u7684\u65CB\u8F49\u9215,\u8B93\u300C\u4F60\u7684\u300D\u548C\u300C\u76EE\u6A19\u300D\u4E00\u6A23";
+  if (g.status === "won") statusText = "\u5B8C\u6210!\u5168\u968A\u4E00\u8D77\u505A\u5230\u4E86";
+  return /* @__PURE__ */ React.createElement("div", { className: "play" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "stage" }, /* @__PURE__ */ React.createElement(View3D, { scenes, apiRef: api, onPick, spin: g.status === "won" }), cs && /* @__PURE__ */ React.createElement("div", { className: "coach", role: "status" }, /* @__PURE__ */ React.createElement("b", { className: "n" }, "\u6559\u5B78 ", g.coach + 1, "/", coachList.length), /* @__PURE__ */ React.createElement("div", { className: "grow" }, cs.text), cs.manual ? /* @__PURE__ */ React.createElement("button", { className: "btn sm pri", onClick: () => d({ type: "COACH_NEXT" }) }, "\u6211\u770B\u61C2\u4E86") : /* @__PURE__ */ React.createElement("button", { className: "btn sm ghost", onClick: () => d({ type: "COACH_OFF" }) }, "\u7565\u904E")), g.status === "won" && /* @__PURE__ */ React.createElement("div", { className: "overlay", style: { background: "color-mix(in srgb, var(--bg) 55%, transparent)", alignItems: "end" } }, /* @__PURE__ */ React.createElement("div", { className: "box" }, /* @__PURE__ */ React.createElement(Stars, { n: g.result.stars, big: true }), /* @__PURE__ */ React.createElement("h3", null, "\u5B8C\u6210!"), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, fmtT(g.elapsed), " \xB7 ", g.steps, " \u6B65(\u53C3\u8003 ", lv.par, ") \xB7 \u63D0\u793A ", g.hints, " \u6B21 \xB7 +", g.result.points, " \u9EDE"), /* @__PURE__ */ React.createElement("div", { className: "row wrap" }, /* @__PURE__ */ React.createElement("button", { className: "btn pri", onClick: () => d({ type: "GO", screen: "review" }) }, "\u5718\u968A\u56DE\u9867"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => d({ type: "START", lv: lv.dynamic ? lv : LV.get(lv.id) }) }, "\u518D\u73A9\u4E00\u6B21")))), g.status === "lost" && /* @__PURE__ */ React.createElement("div", { className: "overlay" }, /* @__PURE__ */ React.createElement("div", { className: "box" }, /* @__PURE__ */ React.createElement("h3", null, g.msg), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, "\u6C92\u95DC\u4FC2,\u9019\u6B21\u7684\u7D93\u9A57\u8B93\u4E0B\u4E00\u6B21\u66F4\u5FEB\u3002\u60F3\u60F3\u8AB0\u7684\u54EA\u500B\u60F3\u6CD5\u6700\u6709\u5E6B\u52A9?"), /* @__PURE__ */ React.createElement("div", { className: "row wrap" }, /* @__PURE__ */ React.createElement("button", { className: "btn pri", onClick: () => d({ type: "START", lv: lv.dynamic ? lv : LV.get(lv.id) }) }, "\u91CD\u8A66"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => d({ type: "GO", screen: "map" }) }, "\u56DE\u5730\u5716"))))), /* @__PURE__ */ React.createElement("div", { className: "stagebar" }, /* @__PURE__ */ React.createElement("div", { className: "seg", role: "group", "aria-label": "\u8996\u89D2" }, [["iso", "\u7B49\u89D2"], ["front", "\u6B63\u9762"], ["right", "\u53F3\u5074"], ["top", "\u4E0A\u65B9"]].map(([k, t]) => /* @__PURE__ */ React.createElement("button", { key: k, onClick: () => api.current && api.current.preset(k) }, t))), /* @__PURE__ */ React.createElement("button", { className: "btn sm", onClick: () => api.current && api.current.zoom(0.85), "aria-label": "\u653E\u5927" }, "\uFF0B"), /* @__PURE__ */ React.createElement("button", { className: "btn sm", onClick: () => api.current && api.current.zoom(1.18), "aria-label": "\u7E2E\u5C0F" }, "\uFF0D"), isPack && L.box[1] > 1 && /* @__PURE__ */ React.createElement("label", { className: "slice" }, "\u5207\u5C64 ", /* @__PURE__ */ React.createElement("input", { type: "range", min: "0", max: L.box[1] - 1, value: g.maxY, onChange: (e) => d({ type: "SLICE", y: +e.target.value }), "aria-label": "\u53EA\u986F\u793A\u5230\u7B2C\u5E7E\u5C64" }), "Y \u2264 ", g.maxY))), /* @__PURE__ */ React.createElement("div", { className: "side" }, /* @__PURE__ */ React.createElement("div", { className: "between" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h3", null, lv.name), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, lv.dynamic ? lv.dynamic === "daily" ? "\u6BCF\u65E5\u6311\u6230" : "\u96A8\u6A5F\u95DC\u5361" : `\u4E16\u754C ${lv.world} \xB7 ${lv.id}`)), /* @__PURE__ */ React.createElement("div", { className: "chips", style: { marginLeft: 0 } }, left != null && /* @__PURE__ */ React.createElement("span", { className: "chip" + (left <= 15 ? " bad" : "") }, "\u5269 ", /* @__PURE__ */ React.createElement("b", null, fmtT(left))), left == null && /* @__PURE__ */ React.createElement("span", { className: "chip" }, /* @__PURE__ */ React.createElement("b", null, fmtT(g.elapsed))), /* @__PURE__ */ React.createElement("span", { className: "chip" + (lv.stepLimit && g.steps >= lv.stepLimit ? " warn" : "") }, "\u6B65\u6578 ", /* @__PURE__ */ React.createElement("b", null, g.steps, lv.stepLimit ? "/" + lv.stepLimit : "")))), /* @__PURE__ */ React.createElement("div", { className: "status " + statusCls, role: "status", "aria-live": "polite", "data-testid": "status" }, /* @__PURE__ */ React.createElement("span", { className: "dotm" }), statusText, isPack && g.status === "play" && /* @__PURE__ */ React.createElement("span", { className: "muted small", style: { marginLeft: "auto", whiteSpace: "nowrap" } }, filled, "/", total, " \u683C")), /* @__PURE__ */ React.createElement(Controls, { g, d, hl }), isPack ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "acts" }, /* @__PURE__ */ React.createElement("button", { className: "btn pri" + (hl.has("place") ? " hl" : ""), disabled: !g.held || v && !v.ok, onClick: () => d({ type: "PLACE" }), "data-testid": "place" }, "\u653E\u4E0B"), /* @__PURE__ */ React.createElement("button", { className: "btn", disabled: !g.held, onClick: () => d({ type: "DROP" }) }, "\u653E\u56DE\u6258\u76E4"), /* @__PURE__ */ React.createElement("button", { className: "btn", disabled: g.hints >= MAXHINT, onClick: () => d({ type: "HINT" }) }, "\u63D0\u793A ", g.hints, "/", MAXHINT)), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h3", { style: { fontSize: 15 } }, "\u6258\u76E4 ", /* @__PURE__ */ React.createElement("span", { className: "small muted", style: { fontFamily: "var(--font-body)" } }, "\u9EDE\u4E00\u4E0B\u9078\u53D6,\u9EDE\u76D2\u5B50\u88E1\u7684\u65B9\u584A\u53EF\u53D6\u56DE")), /* @__PURE__ */ React.createElement("div", { className: "tray", role: "list" }, L.pieces.map((p) => {
+    const placed = g.placed.some((q) => q.pid === p.id), held = g.held && g.held.pid === p.id;
+    return /* @__PURE__ */ React.createElement("button", { key: p.id, role: "listitem", className: "pc" + (held ? " held" : "") + (placed ? " placed" : "") + (hl.has("tray-" + p.id) ? " hl" : ""), onClick: () => d({ type: "SELECT_PIECE", pid: p.id }), "aria-label": pname(L, p.id) + (placed ? "(\u5DF2\u653E\u5165,\u9EDE\u64CA\u53D6\u56DE)" : "") }, /* @__PURE__ */ React.createElement("span", { className: "bar", style: { background: `var(--${colorOf(L, p.id)})` } }), /* @__PURE__ */ React.createElement(Thumb, { L, pid: p.id, tick }), /* @__PURE__ */ React.createElement("span", { className: "nm" }, pname(L, p.id)), placed && /* @__PURE__ */ React.createElement("span", { className: "ck" }, "\u2713"));
+  }))), rules.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "card", style: { padding: 10 } }, /* @__PURE__ */ React.createElement("h3", { style: { fontSize: 15, marginBottom: 4 } }, "\u898F\u5247"), rules.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "rule " + (r.ok ? "ok" : "no") }, /* @__PURE__ */ React.createElement("span", { className: "rk" }, r.ok ? "\u2713" : "\u25CB"), /* @__PURE__ */ React.createElement("span", null, r.text))))) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "objs" }, L.objects.map((o, i) => {
+    const pct = matchPct(L, o, g.objs[i].M);
+    return /* @__PURE__ */ React.createElement("button", { key: o.id, className: "obj" + (g.sel === i ? " sel" : ""), onClick: () => d({ type: "SELECT_OBJ", i }), "aria-pressed": g.sel === i }, /* @__PURE__ */ React.createElement("div", { className: "between", style: { gap: 4 } }, /* @__PURE__ */ React.createElement("b", null, L.objects.length > 1 ? `\u7269\u4EF6 ${i + 1}` : C.nameOf(L, o.shape)), /* @__PURE__ */ React.createElement("span", { className: "mono small" }, pct, "%")), /* @__PURE__ */ React.createElement("div", { className: "meter" + (pct === 100 ? " full" : "") }, /* @__PURE__ */ React.createElement("i", { style: { width: pct + "%" } })), /* @__PURE__ */ React.createElement("div", { className: "small muted" }, "\u5C0D\u9F4A\u5EA6"));
+  })), /* @__PURE__ */ React.createElement("div", { className: "acts", style: { gridTemplateColumns: "1fr 1fr" } }, /* @__PURE__ */ React.createElement("button", { className: "btn", disabled: g.hints >= MAXHINT, onClick: () => d({ type: "HINT" }) }, "\u63D0\u793A ", g.hints, "/", MAXHINT), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => d({ type: "START", lv }) }, "\u91CD\u4F86"))), g.hintText && /* @__PURE__ */ React.createElement("div", { className: "card small", style: { padding: 10, borderColor: "var(--warn)" }, role: "status" }, "\u{1F4A1} ", g.hintText), g.hints > 0 && /* @__PURE__ */ React.createElement("p", { className: "small muted" }, "\u63D0\u793A\u6703\u6263\u5408\u4F5C\u9EDE\u6578(\u6BCF\u6B21 ", HINT_COST, " \u9EDE)\u3002"), /* @__PURE__ */ React.createElement("details", { className: "card", style: { padding: 10 } }, /* @__PURE__ */ React.createElement("summary", { style: { cursor: "pointer", fontWeight: 700 } }, "\u5718\u968A\u6E9D\u901A ", /* @__PURE__ */ React.createElement("span", { className: "small muted", style: { fontWeight: 400 } }, "\u9EDE\u4E00\u4E0B\u8A18\u9304,\u56DE\u9867\u6642\u7528\u5F97\u5230")), s.team.members.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "ops", style: { margin: "8px 0 4px" } }, /* @__PURE__ */ React.createElement("span", { className: "small muted" }, "\u76EE\u524D\u64CD\u4F5C:"), /* @__PURE__ */ React.createElement("div", { className: "seg" }, /* @__PURE__ */ React.createElement("button", { className: s.team.op < 0 ? "on" : "", onClick: () => d({ type: "TEAM", v: { op: -1 } }) }, "\u5927\u5BB6"), s.team.members.map((m, i) => /* @__PURE__ */ React.createElement("button", { key: m, className: s.team.op === i ? "on" : "", onClick: () => d({ type: "TEAM", v: { op: i } }) }, m)))), /* @__PURE__ */ React.createElement("div", { className: "chat", style: { marginTop: 8 } }, TAGS.map((t) => /* @__PURE__ */ React.createElement("button", { key: t, className: "btn", onClick: () => d({ type: "TAG", text: t }) }, t, g.tags[t] ? ` \xD7${g.tags[t]}` : "")))), /* @__PURE__ */ React.createElement("div", { className: "row wrap" }, /* @__PURE__ */ React.createElement("button", { className: "btn sm ghost", onClick: () => setShowHelp((x) => !x), "aria-expanded": showHelp }, "\u64CD\u4F5C\u8AAA\u660E"), COACH[lv.id] && /* @__PURE__ */ React.createElement("button", { className: "btn sm ghost", onClick: () => d({ type: "COACH_ON" }) }, "\u91CD\u770B\u6559\u5B78"), /* @__PURE__ */ React.createElement("button", { className: "btn sm ghost", onClick: () => d({ type: "GO", screen: "map" }) }, "\u96E2\u958B\u95DC\u5361")), showHelp && /* @__PURE__ */ React.createElement("p", { className: "help" }, "\u65CB\u8F49:\u27F2\uFF0B \u70BA\u53F3\u624B\u5B9A\u5247\u7684\u6B63\u5411(\u62C7\u6307\u6307\u5411\u8EF8\u6B63\u65B9\u5411,\u56DB\u6307\u5F4E\u66F2\u7684\u65B9\u5411),\u27F3\u2212 \u70BA\u53CD\u5411,\u6BCF\u6B21 90\xB0\u3002\u5EA7\u6A19:\u76D2\u908A\u7684\u6578\u5B57\u5C31\u662F\u683C\u5B50\u7DE8\u865F\u3002", /* @__PURE__ */ React.createElement("br", null), "\u62D6\u66F3\u756B\u9762\u63DB\u8996\u89D2,\u96D9\u6307\u6216\u6EFE\u8F2A\u7E2E\u653E\u3002\u9375\u76E4:", /* @__PURE__ */ React.createElement("kbd", null, "\u2190"), /* @__PURE__ */ React.createElement("kbd", null, "\u2192"), " \u79FB X\u3001", /* @__PURE__ */ React.createElement("kbd", null, "\u2191"), /* @__PURE__ */ React.createElement("kbd", null, "\u2193"), " \u79FB Z\u3001", /* @__PURE__ */ React.createElement("kbd", null, "R"), /* @__PURE__ */ React.createElement("kbd", null, "F"), " \u79FB Y\u3001", /* @__PURE__ */ React.createElement("kbd", null, "X"), /* @__PURE__ */ React.createElement("kbd", null, "Y"), /* @__PURE__ */ React.createElement("kbd", null, "Z"), " \u65CB\u8F49(\u52A0 Shift \u53CD\u5411)\u3001", /* @__PURE__ */ React.createElement("kbd", null, "Enter"), " \u653E\u4E0B\u3002")));
+}
+function Review({ s, d, start }) {
+  const g = s.game, lv = g.lv, r = g.result;
+  const names = Object.keys(g.by), maxBy = Math.max(1, ...Object.values(g.by));
+  const used = Object.keys(g.tags);
+  const all = LV.all(), idx = all.findIndex((l) => l.id === lv.id), next = idx >= 0 ? all[idx + 1] : null;
+  if (!r) return /* @__PURE__ */ React.createElement("div", { className: "card" }, /* @__PURE__ */ React.createElement("p", null, "\u9019\u4E00\u95DC\u9084\u6C92\u5B8C\u6210\u3002"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => d({ type: "GO", screen: "play" }) }, "\u56DE\u5230\u95DC\u5361"));
+  return /* @__PURE__ */ React.createElement("div", { className: "review" }, /* @__PURE__ */ React.createElement("div", { className: "card", style: { display: "flex", flexDirection: "column", gap: 12 } }, /* @__PURE__ */ React.createElement("div", { className: "between" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h2", null, "\u5718\u968A\u56DE\u9867 \xB7 ", lv.name), /* @__PURE__ */ React.createElement("p", { className: "small muted" }, s.team.name || "\u6211\u5011\u9019\u4E00\u968A")), /* @__PURE__ */ React.createElement(Stars, { n: r.stars, big: true })), /* @__PURE__ */ React.createElement("div", { className: "stat" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, fmtT(g.elapsed)), /* @__PURE__ */ React.createElement("span", null, "\u82B1\u8CBB\u6642\u9593")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, g.steps, "/", lv.par), /* @__PURE__ */ React.createElement("span", null, "\u6B65\u6578/\u53C3\u8003")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, g.hints), /* @__PURE__ */ React.createElement("span", null, "\u4F7F\u7528\u63D0\u793A")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", null, "+", r.points), /* @__PURE__ */ React.createElement("span", null, "\u5408\u4F5C\u9EDE\u6578"))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h3", { style: { fontSize: 15 } }, "\u6BCF\u500B\u4EBA\u7684\u53C3\u8207"), names.length ? /* @__PURE__ */ React.createElement("div", { className: "bars", style: { marginTop: 6 } }, names.map((n) => /* @__PURE__ */ React.createElement("div", { className: "b", key: n }, /* @__PURE__ */ React.createElement("span", null, n), /* @__PURE__ */ React.createElement("div", { className: "meter", style: { marginTop: 0 } }, /* @__PURE__ */ React.createElement("i", { style: { width: 100 * g.by[n] / maxBy + "%" } })), /* @__PURE__ */ React.createElement("span", { className: "mono" }, g.by[n])))) : /* @__PURE__ */ React.createElement("p", { className: "small muted" }, "\u6C92\u6709\u6A19\u8A18\u64CD\u4F5C\u8005\u3002\u4E0B\u6B21\u53EF\u4EE5\u5728\u300C\u5718\u968A\u6E9D\u901A\u300D\u9078\u64C7\u76EE\u524D\u7531\u8AB0\u64CD\u4F5C\u3002")), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h3", { style: { fontSize: 15 } }, "\u6E9D\u901A\u6A19\u7C64"), used.length ? /* @__PURE__ */ React.createElement("div", { className: "qchips" }, used.map((t) => /* @__PURE__ */ React.createElement("span", { className: "chip", key: t }, t, " ", /* @__PURE__ */ React.createElement("b", null, "\xD7", g.tags[t])))) : /* @__PURE__ */ React.createElement("p", { className: "small muted" }, "\u9019\u95DC\u6C92\u6709\u4F7F\u7528\u6E9D\u901A\u6A19\u7C64\u3002")), /* @__PURE__ */ React.createElement("div", { className: "row wrap" }, next && /* @__PURE__ */ React.createElement("button", { className: "btn pri", onClick: () => start(next) }, "\u4E0B\u4E00\u95DC:", next.name), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => start(lv.dynamic ? lv : LV.get(lv.id)) }, "\u518D\u6311\u6230\u4E00\u6B21"), /* @__PURE__ */ React.createElement("button", { className: "btn", onClick: () => d({ type: "GO", screen: "map" }) }, "\u95DC\u5361\u5730\u5716"))), /* @__PURE__ */ React.createElement("div", { className: "card", style: { display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement("h3", null, "\u89BA\u5BDF\u5F15\u5C0E"), /* @__PURE__ */ React.createElement("p", null, /* @__PURE__ */ React.createElement("b", null, "\u54EA\u4E00\u6B21\u6E9D\u901A\u6216\u5354\u8ABF,\u6700\u5E6B\u52A9\u5718\u968A\u5B8C\u6210\u76EE\u6A19?")), /* @__PURE__ */ React.createElement("div", { className: "qchips", "aria-label": "\u5FEB\u901F\u5E36\u5165" }, (used.length ? used : TAGS.slice(0, 3)).map((t) => /* @__PURE__ */ React.createElement("button", { key: t, className: "btn sm", onClick: () => d({ type: "NOTE", v: (s.note ? s.note + " " : "") + `\u300C${t}\u300D` }) }, t))), /* @__PURE__ */ React.createElement("textarea", { value: s.note || "", onChange: (e) => d({ type: "NOTE", v: e.target.value }), placeholder: "\u4F8B\u5982:\u7576\u5C0F\u83EF\u8AAA\u300C\u5148\u770B\u54EA\u4E00\u9762\u671D\u4E0B\u300D,\u6211\u5011\u624D\u767C\u73FE\u8981\u5148\u8F49 X \u8EF8\u2026\u2026", "aria-label": "\u5718\u968A\u89BA\u5BDF\u7D00\u9304" }), /* @__PURE__ */ React.createElement("div", { className: "row" }, /* @__PURE__ */ React.createElement("button", { className: "btn pri", disabled: !(s.note || "").trim() || s.noteSaved, onClick: () => d({ type: "SAVE_NOTE", v: s.note.trim() }) }, s.noteSaved ? "\u5DF2\u8A18\u4E0B" : "\u8A18\u4E0B\u4F86")), /* @__PURE__ */ React.createElement("h3", { style: { fontSize: 15, marginTop: 6 } }, "\u6642\u9593\u7DDA"), /* @__PURE__ */ React.createElement("div", { className: "log" }, g.log.length ? g.log.map((e, i) => /* @__PURE__ */ React.createElement("div", { key: i }, /* @__PURE__ */ React.createElement("span", { className: "t" }, fmtT(e.t)), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("b", null, e.w), " ", e.k === "tag" ? `\u8AAA:\u300C${e.x}\u300D` : e.k === "hint" ? e.x : e.x))) : /* @__PURE__ */ React.createElement("p", { className: "muted" }, "\u6C92\u6709\u7D00\u9304"))));
+}
+function App() {
+  const [s, d] = useReducer(reducer, null, () => ({ screen: "home", team: { name: "", members: [], op: -1, auto: false }, prog: loadProg(), game: null, note: "", noteSaved: false }));
+  useEffect(() => {
+    saveProg(s.prog);
+  }, [s.prog]);
+  const start = useCallback((lv) => {
+    if (lv) d({ type: "START", lv });
+  }, []);
+  return /* @__PURE__ */ React.createElement("div", { className: "app" }, /* @__PURE__ */ React.createElement(Header, { s, d }), s.screen === "home" && /* @__PURE__ */ React.createElement(Home, { s, d, start }), s.screen === "map" && /* @__PURE__ */ React.createElement(MapScreen, { s, d, start }), s.screen === "play" && s.game && /* @__PURE__ */ React.createElement(Play, { s, d, key: s.game.gid }), s.screen === "review" && s.game && /* @__PURE__ */ React.createElement(Review, { s, d, start }));
+}
+ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
+
+</script>
+
+</body></html>
